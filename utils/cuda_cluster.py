@@ -9,4 +9,3 @@ os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 cluster = LocalCUDACluster()
 client = Client(cluster)
-client
