@@ -14,3 +14,24 @@ def read_data(path, type='parquet', index=False):
     else:
         print('cannot read data')
 
+
+def map_to_idx(df, feature_name):
+    return None
+
+def factorize_small_cardinality(df, col):
+    df['id'] = df.index
+    tmp_col = f'{col}_encode'
+    tmp = df[col].unique().compute()
+    tmp = tmp.to_frame().reset_index()
+    
+    df = df.merge(tmp,on=col,how='left')
+    df, = dask.persist(df)
+    wait(df)
+    del tmp
+
+    df[tmp_col] = df['index']
+    df = df.drop('index',axis=1)
+    df = df.set_index('id', drop=True)
+    df, = dask.persist(df)
+    wait(df)
+    return df
