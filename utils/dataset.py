@@ -15,9 +15,6 @@ def read_data(path, type='parquet', index=False):
         print('cannot read data')
 
 
-def map_to_idx(df, feature_name):
-    return None
-
 
 def factorize_small_cardinality(df, col):
     df['id'] = df.index
