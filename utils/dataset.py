@@ -4,8 +4,6 @@ from dask_cuda import LocalCUDACluster
 from utils.cuda_cluster import client
 
 def read_data(path, type='parquet', index=False):
-
-
     if type == 'parquet':
         df = dask_cudf.read_parquet(f'{path}/*.parquet', index=False)
         df, = dask.persist(df)
@@ -16,6 +14,3 @@ def read_data(path, type='parquet', index=False):
     else:
         print('cannot read data')
 
-
-def arr_to_series(arr):
-    return dask_cudf.Seriese(arr)
