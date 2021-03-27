@@ -1,4 +1,13 @@
 # ACM RecSys Challenge 2021
+
+```
+$ tree -d
+.
+├── analysis
+└── preprocessing
+```
+
+
 ## About the challenge
 From the Challenge website: 
 The RecSys Challenge 2021 will be organized by Politecnico di Bari, ETH Zürich, Jönköping University, and the data set will be provided by Twitter. The challenge focuses on a real-world task of tweet engagement prediction in a dynamic environment. For 2021, the challenge considers four different engagement types: Likes, Retweet, Quote, and replies. This year’s challenge brings the problem even closer to Twitter’s real recommender systems by introducing latency constraints. We will also increase the data size to encourage novel methods. Also, the data density will be increased in terms of the graph where users are considered to be nodes and interactions as edges.
