@@ -18,10 +18,13 @@ def read_data(path, type='parquet', index=False):
 def map_to_idx(df, feature_name):
     return None
 
+
 def factorize_small_cardinality(df, col):
     df['id'] = df.index
     tmp_col = f'{col}_encode'
+    
     tmp = df[col].unique().compute()
+    idx_to_col = dict(zip(tmp.index.to_array(), tmp.to_array()))
     tmp = tmp.to_frame().reset_index()
     
     df = df.merge(tmp,on=col,how='left')
@@ -34,4 +37,4 @@ def factorize_small_cardinality(df, col):
     df = df.set_index('id', drop=True)
     df, = dask.persist(df)
     wait(df)
-    return df
+    return df, idx_to_col
