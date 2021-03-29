@@ -23,7 +23,6 @@ def factorize_small_cardinality(df, col, tmp=None, is_several=False):
     if not is_several:
         tmp = df[col].unique().compute()
     
-
     idx_to_col = dict(zip(tmp.index.to_array(), tmp.to_array()))
     tmp = tmp.to_frame().reset_index()
 
@@ -43,24 +42,4 @@ def factorize_small_cardinality(df, col, tmp=None, is_several=False):
     wait(df)
     return df, idx_to_col
 
-def map_features_to_dict(df, col, sereis):
-    df['id'] = df.index
-    tmp_col = f'{col}_encode'
-
-    tmp = sereis
-    idx_to_col = dict(zip(tmp.index.to_array(), tmp.to_array()))
-    tmp = tmp.to_frame().reset_index()
-    
-    
-    df = df.merge(tmp,on=col,how='left')
-    df, = dask.persist(df)
-    wait(df)
-    del tmp
-
-    df[tmp_col] = df['index']
-    df = df.drop('index',axis=1)
-    df = df.set_index('id', drop=True)
-    df, = dask.persist(df)
-    wait(df)
-    return df, idx_to_col
     
