@@ -18,7 +18,8 @@ def get_day_phase(hour):
     elif hour in evening:
         return "evening"
 
-def get_hours_from_midnight_of_current_day(timestamp):
+def getHoursFromMidnightOfCurrentDay(timestamp):
+    timestamp = datetime.fromtimestamp(timestamp)
     fixed_point = timestamp.replace(hour=0,minute=0,second=0)
     difference = timestamp - fixed_point
     return math.floor(difference.seconds/60/60)
