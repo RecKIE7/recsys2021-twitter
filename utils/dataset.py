@@ -23,8 +23,8 @@ def factorize_small_cardinality(df, col, tmp=None, is_several=False):
     if not is_several:
         tmp = df[col].unique().compute()
     
-    # idx_to_col = dict(zip(tmp.index.to_array(), tmp.to_array()))
-    idx_to_col = dict(zip(tmp.index.values , tmp.values))
+    idx_to_col = dict(zip(tmp.index.to_array(), tmp.to_array()))
+    # idx_to_col = dict(zip(tmp.index.values , tmp.values))
     tmp = tmp.to_frame().reset_index()
 
     if is_several:
