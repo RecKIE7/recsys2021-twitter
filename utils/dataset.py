@@ -2,6 +2,7 @@ import dask as dask, dask_cudf
 from dask.distributed import Client, wait, progress
 from dask_cuda import LocalCUDACluster
 from utils.cuda_cluster import client
+import tensorflow as tf
 
 def read_data(path, type='parquet', index=False):
     if type == 'parquet':
@@ -63,11 +64,9 @@ def factorize_small_cardinality_with_index(df, col, tmp_col):
     return df,head
 
 
-
 def split_join(ds,sep):
     df = ds.split(sep)
     return df
-
 
 
 def get_media_index(media_index) :
@@ -79,3 +78,13 @@ def get_media_index(media_index) :
     media_index["number_of_media"] = media_index['media'].apply(lambda x : len(x))
     media_index = media_index.drop('present_media', axis = 1)
     return media_index
+
+
+def df_to_tfdataset(df, col='label', shuffle=True, batch_size=32):
+    df = df.copy()
+    labels = df.pop(col)
+    ds = tf.data.Dataset.from_tensor_slices((dict(df), labels))
+    if shuffle:
+        ds = ds.shuffle(buffer_size=len(df))
+    ds = ds.batch(batch_size)
+    return ds
