@@ -42,6 +42,3 @@ def factorize_small_cardinality(df, col, tmp=None, is_several=False):
     df, = dask.persist(df)
     wait(df)
     return df, idx_to_col
-
-    
-
