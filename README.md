@@ -5,11 +5,9 @@ $ tree -d
 .
 ├── analysis
 ├── core
-│   └── __pycache__
 ├── models
 │   └── notebooks
 ├── preprocessing
-│   └── dask-worker-space
 └── utils
 
 
