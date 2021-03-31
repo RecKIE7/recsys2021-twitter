@@ -43,8 +43,6 @@ def factorize_small_cardinality(df, col, tmp=None, is_several=False):
     wait(df)
     return df, idx_to_col
 
-    
-
 def factorize_small_cardinality_with_index(df, col, tmp_col):
     tmp = df[col].unique().compute()
     tmp = tmp.to_frame().reset_index()
