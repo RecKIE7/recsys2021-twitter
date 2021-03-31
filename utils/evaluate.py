@@ -10,10 +10,3 @@ def compute_rce(pred, gt):
     data_ctr = calculate_ctr(gt)
     strawman_cross_entropy = log_loss(gt, [data_ctr for _ in range(len(gt))])
     return (1.0 - cross_entropy/strawman_cross_entropy)*100.0
-
-  
-ground_truth = read_predictions("gt.csv") # will return data in the form (tweet_id, user_id, labed (1 or 0))
-predictions = read_predictions("predictions.csv") # will return data in the form (tweet_id, user_id, prediction)
-
-rce = compute_rce(predictions, ground_truth)
-average_precision = average_precision_score(ground_truth, predictions)
