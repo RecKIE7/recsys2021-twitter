@@ -5,8 +5,11 @@ $ tree -d
 .
 ├── analysis
 ├── core
+├── models
+│   └── notebooks
 ├── preprocessing
 └── utils
+
 
 ```
 
