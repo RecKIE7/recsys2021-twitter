@@ -56,7 +56,7 @@ def factorize_small_cardinality_with_index(df, col, tmp_col):
     df = df.drop('index', axis=1)
     df, = dask.persist(df)
     wait(df)
-    tmp_col_list = ["media_type", "engagement_type", "language_encode", "user_encode"]
+    tmp_col_list = ["media_type", "engagement_type", "language_encode", "user_encode", "tweet_id_encode"]
     if tmp_col in tmp_col_list :
         index_list = tmp
         del tmp
