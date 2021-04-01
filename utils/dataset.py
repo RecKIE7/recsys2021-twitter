@@ -79,11 +79,10 @@ def get_media_index(media_index) :
     media_index = media_index.drop('present_media', axis = 1)
     return media_index
 
-
 def df_to_tfdataset(df, col='label', shuffle=True, batch_size=32):
     df = df.copy()
     labels = df.pop(col)
-    ds = tf.data.Dataset.from_tensor_slices((dict(df), labels))
+    ds = tf.data.Dataset.from_tensor_slices((df.to_pandas().to_dict('series'), labels.to_array()))
     if shuffle:
         ds = ds.shuffle(buffer_size=len(df))
     ds = ds.batch(batch_size)
