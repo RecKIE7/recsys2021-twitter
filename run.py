@@ -2,15 +2,12 @@
 
 import os
 
-from model import random_prediction_model
+from models.baseline.random_model import random_prediction_model
+from core.config import raw_features
+import core.config as conf
+from tqdm import tqdm
 
-all_features = ["text_tokens", "hashtags", "tweet_id", "present_media", "present_links", "present_domains",\
-                "tweet_type","language", "tweet_timestamp", "engaged_with_user_id", "engaged_with_user_follower_count",\
-               "engaged_with_user_following_count", "engaged_with_user_is_verified", "engaged_with_user_account_creation",\
-               "engaging_user_id", "enaging_user_follower_count", "enaging_user_following_count", "enaging_user_is_verified",\
-               "enaging_user_account_creation", "engagee_follows_engager"]
-
-all_features_to_idx = dict(zip(all_features, range(len(all_features))))
+all_features_to_idx = dict(zip(raw_features, range(len(raw_features))))
 
 def parse_input_line(line):
     features = line.split("\x01")
@@ -22,10 +19,10 @@ def parse_input_line(line):
 
 def evaluate_test_set():
     model = random_prediction_model
-    part_files = [os.path.join('./test', f) for f in os.listdir('./test') if 'part' in f]
-
-    with open('results.csv', 'w') as output:
-        for file in part_files:
+    path = '/hdd/twitter/raw_lzo/'
+    part_files = [os.path.join(path, f) for f in os.listdir(path) if 'part' in f][:1]
+    with open('submission/results.csv', 'w') as output:
+        for file in tqdm(part_files):
             with open(file, 'r') as f:
                 for line in f.readlines():
                     tweet_id, user_id, features = parse_input_line(line)
