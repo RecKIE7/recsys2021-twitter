@@ -1,6 +1,6 @@
 # ACM RecSys Challenge 2021
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/RecKIE7/recsys2021-twitter/blob/master/LICENSE)
+[![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/RecKIE7/recsys2021-twitter/blob/master/LICENSE)
 ![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)
 [![Version](https://img.shields.io/badge/version-v1.0.0-orange)](https://github.com/RecKIE7/recsys2021-twitter) 
 ![GitHub repo size](https://img.shields.io/github/repo-size/RecKIE7/recsys2021-twitter)
