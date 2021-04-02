@@ -20,7 +20,7 @@ def parse_input_line(line):
 def evaluate_test_set():
     model = random_prediction_model
     path = '/hdd/twitter/raw_lzo/'
-    part_files = [os.path.join(path, f) for f in os.listdir(path) if 'part' in f][:1]
+    part_files = [os.path.join(path, f) for f in os.listdir(path) if 'part' in f]
     with open('submission/results.csv', 'w') as output:
         for file in tqdm(part_files):
             with open(file, 'r') as f:
