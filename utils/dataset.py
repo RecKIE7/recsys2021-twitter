@@ -1,12 +1,19 @@
+import sys
+sys.path.append('..')
+
 import dask as dask, dask_cudf
 from dask.distributed import Client, wait, progress
 from dask_cuda import LocalCUDACluster
 from utils.cuda_cluster import client
 import tensorflow as tf
+import core.config as conf
 
-def read_data(path, type='parquet', index=False):
+
+def read_data(path, type='parquet', index=False, n_partitions=0):
     if type == 'parquet':
         df = dask_cudf.read_parquet(f'{path}/*.parquet', index=False)
+        if n_partitions > 0:
+            df = df.repartition(npartitions=n_partitions)
         df, = dask.persist(df)
         df = df.set_index('id', drop=True)
         _ = wait(df)
