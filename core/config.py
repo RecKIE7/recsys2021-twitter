@@ -13,3 +13,4 @@ raw_features = ["text_tokens", "hashtags", "tweet_id", "present_media", "present
 labels = ["reply_timestamp", "retweet_timestamp", "retweet_with_comment_timestamp", "like_timestamp"]
 
 n_workers = 1
+n_partitions = 16
