@@ -9,7 +9,7 @@ def read_data(path, type='parquet', index=False):
         df, = dask.persist(df)
         df = df.set_index('id', drop=True)
         _ = wait(df)
-        print('number of rows:',len(df)) 
+        #print('number of rows:',len(df)) 
         return df
     else:
         print('cannot read data')
