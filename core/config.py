@@ -3,6 +3,7 @@ data_root = '/dataset/'
 project_root = '~/kie/recsys2021-twitter/'
 raw_data_path = data_root + 'raw/'
 submission_path = project_root + 'submission/'
+preproc_path = '/hdd/preprocessing/'
 
 # features
 raw_features = ["text_tokens", "hashtags", "tweet_id", "present_media", "present_links", "present_domains",\
