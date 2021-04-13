@@ -146,6 +146,7 @@ dask-worker-space
 push.share
 
 bert_ckpt
+bert_model
 submission
 results.csv
 */results.csv
