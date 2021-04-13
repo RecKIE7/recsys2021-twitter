@@ -22,19 +22,21 @@ class Dataset():
         file_list = sorted(file_list)
 
         for file_name in tqdm(file_list):
-            df = dask_cudf.read_csv(f'{path}/{file_name}', sep='\x01', header=None, names=conf.raw_features+conf.labels)
-            df = df.repartition(npartitions=conf.n_partitions)
-            df = self.lzo_to_dataframe(df)
-            df = df.set_index('id', drop=True)
-            df, = dask.persist(df)
-            _ = wait(df)
+            if not os.path.exists(save_dir+file_name+'.parquet'):
+                client.restart()
+                df = dask_cudf.read_csv(f'{path}/{file_name}', sep='\x01', header=None, names=conf.raw_features+conf.labels)
+                df = df.repartition(npartitions=conf.n_partitions)
+                df = self.lzo_to_dataframe(df)
+                df = df.set_index('id', drop=True)
+                df, = dask.persist(df)
+                _ = wait(df)
 
-            df = self.preprocess(df)
+                df = self.preprocess(df)
 
-            if save:
-                save_parquet(df, save_dir+file_name+'.parquet')
-            
-            del df
+                if save:
+                    save_parquet(df, save_dir+file_name+'.parquet')
+                
+                del df
 
     def preprocess(self, df):
         df.columns = conf.raw_features + conf.labels
