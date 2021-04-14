@@ -1,96 +1,99 @@
-import sys
+'''
+모든 parquet에 대해서 preprocessing 적용시키기
+'''
+import sys, os
 sys.path.append('..')
 
-import dask as dask, dask_cudf
-from dask.distributed import Client, wait, progress
-from dask_cuda import LocalCUDACluster
-from utils.cuda_cluster import client
-import tensorflow as tf
+from tqdm import tqdm
+
+from utils.preprocessing import *
 import core.config as conf
 
+class Dataset():
+    def __init__(self, training_flag=True):
+        self.all_features_to_idx = dict(zip(conf.raw_features, range(len(conf.raw_features))))
 
-def read_data(path, type='parquet', index=False, n_partitions=0):
-    if type == 'parquet':
-        df = dask_cudf.read_parquet(f'{path}/*.parquet', index=False)
-        if n_partitions > 0:
-            df = df.repartition(npartitions=n_partitions)
+        # save trian datas
+        # self.load_data_all(path=conf.raw_lzo_path, save=True, save_dir='/hdd/preprocessing/train/')
+        
+    def load_data_all(self, path=conf.raw_lzo_path, save=False, save_dir='.'):
+        file_list = os.listdir(path)
+        file_list = sorted(file_list)
+
+        for file_name in tqdm(file_list):
+            if not os.path.exists(save_dir+file_name+'.parquet'):
+                client.restart()
+                df = dask_cudf.read_csv(f'{path}/{file_name}', sep='\x01', header=None, names=conf.raw_features+conf.labels)
+                df = df.repartition(npartitions=conf.n_partitions)
+                df = self.lzo_to_dataframe(df)
+                df = df.set_index('id', drop=True)
+                df, = dask.persist(df)
+                _ = wait(df)
+
+                df = self.preprocess(df)
+
+                if save:
+                    save_parquet(df, save_dir+file_name+'.parquet')
+                
+                del df
+
+    def preprocess(self, df):
+        df.columns = conf.raw_features + conf.labels
+        df = df.drop('text_tokens', axis=1)
+
         df, = dask.persist(df)
-        df = df.set_index('id', drop=True)
         _ = wait(df)
-        #print('number of rows:',len(df)) 
+
+        features = ['creator_id', 'engager_id', 'tweet_id', 'tweet_type', 'language', 'creator_follower_count', 'creator_following_count', 'domains', 'media', 'tweet_timestamp']
+        df = feature_extraction(df, features=features, labels=conf.labels)
+
+        target = 'like' ########### engagement 
+        df = df.compute().to_pandas() # to pandas
+        for c in ([
+            ['engager_id'],
+            ['engager_id','tweet_type','language'],
+            ['creator_id'],
+            ['domains','media','tweet_type','language']
+            ]):
+            fname = 'TE_'+'_'.join(c)+'_'+target
+            print( fname )
+            df[fname] = tartget_encoding( df, c, target, 20, 0 )
+        df = cudf.from_pandas(df)
+        df = dask_cudf.from_cudf(df,  npartitions=conf.n_partitions).reset_index().drop('index', axis=1)
+
         return df
-    else:
-        print('cannot read data')
 
+    def lzo_to_dataframe(self, df):
+        df['id']   = 1
+        df['id']   = df['id'].cumsum()
+        df['id'] = df['id'].astype('int32')
 
+        df['reply_timestamp']   = df['reply_timestamp'].fillna(0)
+        df['retweet_timestamp'] = df['retweet_timestamp'].fillna(0)
+        df['retweet_with_comment_timestamp'] = df['retweet_with_comment_timestamp'].fillna(0)
+        df['like_timestamp']    = df['like_timestamp'].fillna(0)
 
-def factorize_small_cardinality(df, col, tmp=None, is_several=False):
-    df['id'] = df.index
-    tmp_col = f'{col}_encode'
+        df['reply_timestamp']   = df['reply_timestamp'].astype('int32')
+        df['retweet_timestamp'] = df['retweet_timestamp'].astype('int32')
+        df['retweet_with_comment_timestamp'] = df['retweet_with_comment_timestamp'].astype('int32')
+        df['like_timestamp']    = df['like_timestamp'].astype('int32')
 
-    if not is_several:
-        tmp = df[col].unique().compute()
-    
-    idx_to_col = dict(zip(tmp.index.to_array(), tmp.to_array()))
-    # idx_to_col = dict(zip(tmp.index.values , tmp.values))
-    tmp = tmp.to_frame().reset_index()
+        df['tweet_timestamp']         = df['tweet_timestamp'].astype( np.int32 )
+        df['creator_follower_count']  = df['creator_follower_count'].astype( np.int32 )
+        df['creator_following_count'] = df['creator_following_count'].astype( np.int32 )
+        df['creator_account_creation']= df['creator_account_creation'].astype( np.int32 )
+        df['engager_follower_count']  = df['engager_follower_count'].astype( np.int32 )
+        df['engager_following_count'] = df['engager_following_count'].astype( np.int32 )
+        df['engager_account_creation']= df['engager_account_creation'].astype( np.int32 )
 
-    if is_several:
-        tmp[col] = tmp[0]
-        tmp = tmp.drop(0, axis=1)
-    
-    df = df.merge(tmp,on=col,how='left')
-    df, = dask.persist(df)
-    wait(df)
-    del tmp
+        df, = dask.persist(df)
+        _ = wait(df)
 
-    df[tmp_col] = df['index']
-    df = df.drop('index',axis=1)
-    df = df.set_index('id', drop=True)
-    df, = dask.persist(df)
-    wait(df)
-    return df, idx_to_col
+        return df
 
-def factorize_small_cardinality_with_index(df, col, tmp_col):
-    tmp = df[col].unique().compute()
-    tmp = tmp.to_frame().reset_index()
-    df = df.merge(tmp,on=col,how='left')
-    df, = dask.persist(df)
-    wait(df)
-    head=df.head()
-    df[tmp_col] = df['index']
-    df = df.drop('index', axis=1)
-    df, = dask.persist(df)
-    wait(df)
-    tmp_col_list = ["media_type", "engagement_type", "language_encode", "user_encode", "tweet_id_encode"]
-    if tmp_col in tmp_col_list :
-        index_list = tmp
-        del tmp
-        return df, index_list, head
-    del tmp
-    return df,head
-
-
-def split_join(ds,sep):
-    df = ds.split(sep)
-    return df
-
-
-def get_media_index(media_index) :
-    media_index = media_index.to_pandas()
-    media_index["media"] = media_index['present_media'].apply(lambda x:  split_join(x,'\t'))
-    media_index["number_of_Video"] = media_index['media'].apply(lambda x : x.count("Video"))
-    media_index["number_of_Photo"] = media_index['media'].apply(lambda x : x.count("Photo"))
-    media_index["number_of_GIF"] = media_index['media'].apply(lambda x : x.count("GIF"))
-    media_index["number_of_media"] = media_index["number_of_Video"] + media_index["number_of_Photo"] + media_index["number_of_GIF"]
-    media_index = media_index.drop('present_media', axis = 1)
-    return media_index
-
-def df_to_tfdataset(df, col='label', shuffle=True, batch_size=32):
-    df = df.copy()
-    labels = df.pop(col)
-    ds = tf.data.Dataset.from_tensor_slices((df.to_pandas().to_dict('series'), labels.to_array()))
-    if shuffle:
-        ds = ds.shuffle(buffer_size=len(df))
-    ds = ds.batch(batch_size)
-    return ds
+    def parse_input_line(self, line):
+        features = line.split("\x01")
+        tweet_id = features[all_features_to_idx['tweet_id']]
+        user_id = features[all_features_to_idx['engaging_user_id']]
+        input_feats = features[all_features_to_idx['text_tokens']]
+        return tweet_id, user_id, input_feats

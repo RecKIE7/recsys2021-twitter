@@ -10,9 +10,3 @@ def compute_rce(pred, gt):
     data_ctr = calculate_ctr(gt) # label에서 전체 positive 비율
     strawman_cross_entropy = log_loss(gt, [data_ctr for _ in range(len(gt))]) 
     return (1.0 - cross_entropy/strawman_cross_entropy)*100.0
-
-def compute_rce(pred, gt):
-    cross_entropy = log_loss(gt, pred)
-    data_ctr = calculate_ctr(gt)
-    strawman_cross_entropy = log_loss(gt, [data_ctr for _ in range(len(gt))])
-    return (1.0 - cross_entropy/strawman_cross_entropy)*100.0
