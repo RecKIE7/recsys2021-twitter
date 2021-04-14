@@ -22,6 +22,7 @@ class Dataiter:
             self.current += 1           
             current_file = self.file_list[r]         
             df = read_data(self.dir + current_file)
+            ################ preprocessing using dataset.py ##################
             gc.collect()
             save_memory(df)
             return df

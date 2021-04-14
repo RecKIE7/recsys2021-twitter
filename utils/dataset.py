@@ -9,7 +9,7 @@ from tqdm import tqdm
 from utils.preprocessing import *
 import core.config as conf
 
-class Dataset():
+class Dataset:
     def __init__(self, training_flag=True):
         self.all_features_to_idx = dict(zip(conf.raw_features, range(len(conf.raw_features))))
 
