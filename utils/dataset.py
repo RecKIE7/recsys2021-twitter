@@ -14,10 +14,9 @@ class Dataset():
         self.all_features_to_idx = dict(zip(conf.raw_features, range(len(conf.raw_features))))
 
         # save trian datas
-        self.load_data(path=conf.raw_lzo_path, save=True, save_dir='/hdd/preprocessing/train/')
-
-
-    def load_data(self, path=conf.raw_lzo_path, save=False, save_dir='.'):
+        # self.load_data_all(path=conf.raw_lzo_path, save=True, save_dir='/hdd/preprocessing/train/')
+        
+    def load_data_all(self, path=conf.raw_lzo_path, save=False, save_dir='.'):
         file_list = os.listdir(path)
         file_list = sorted(file_list)
 
