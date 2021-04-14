@@ -63,7 +63,6 @@ class Dataset:
 
         return df
 
-
     def lzo_to_dataframe(self, df):
         df['id']   = 1
         df['id']   = df['id'].cumsum()
@@ -97,5 +96,5 @@ class Dataset:
         tweet_id = features[all_features_to_idx['tweet_id']]
         user_id = features[all_features_to_idx['engaging_user_id']]
         input_feats = features[all_features_to_idx['text_tokens']]
-        return tweet_id, user_id, input_feats
 
+        return tweet_id, user_id, input_feats
