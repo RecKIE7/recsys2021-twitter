@@ -96,4 +96,5 @@ class Dataset():
         tweet_id = features[all_features_to_idx['tweet_id']]
         user_id = features[all_features_to_idx['engaging_user_id']]
         input_feats = features[all_features_to_idx['text_tokens']]
+
         return tweet_id, user_id, input_feats
