@@ -14,6 +14,7 @@ pd.set_option('display.max_columns', 500)
 
 from utils.util import *
 from utils.evaluate import calculate_ctr, compute_rce, average_precision_score
+from utils.dataiter import Dataiter
 
 import core.config as conf
 
@@ -61,9 +62,12 @@ class XGBoost:
         self.xgb_parms['learning_rate'] = self.LR[TARGET_id]
 
         for i, train in tqdm(enumerate(self.df)):
+            
             RMV = self.feature_extract(train)
-            dtrain = xgb.DMatrix(data=train.drop(RMV, axis=1) ,label=train[TARGET].values)
-            del train
+
+            dtrain = xgb.DMatrix(data=train.drop(RMV, axis=1).compute().to_pandas(),
+                                label=train[TARGET].compute().values)
+
             gc.collect()
 
             if model_prev:
@@ -82,12 +86,13 @@ class XGBoost:
             gc.collect()  
 
             #save model
-            model_path = f'/hdd/cpu_models/model-{TARGET}-{i}.xgb'
+            model_path = f'/hdd/models/model-{TARGET}-{i}.xgb'
             joblib.dump(model, model_path) 
             model_prev = model
             del model
             gc.collect()  
 
+            # print(f'saved models - {path}')
 
 
 

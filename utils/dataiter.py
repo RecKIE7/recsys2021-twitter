@@ -5,14 +5,14 @@ from utils.preprocessing import *
 from utils.dataset import Dataset
 import core.config as conf
 
-class Dataiter:
+class Dataiter(Dataset):
     def __init__(self, path):
         self.dir = path
         self.file_list = os.listdir(path)
         self.current = 0    
         self.stop = len(self.file_list)    
-        self.dataset = Dataset()
- 
+        # self.dataset = Dataset()
+
     def __iter__(self):
         return self         
  
@@ -20,9 +20,14 @@ class Dataiter:
         if self.current < self.stop:    
             r = self.current            
             self.current += 1           
-            current_file = self.file_list[r]         
-            df = read_data(self.dir + current_file)
-            ################ preprocessing using dataset.py ##################
+            current_file = self.file_list[r]
+            df = read_data(self.dir + current_file) # read data (to dataframe)
+            # print(df.columns)
+            # print(len(df))
+            df = self.preprocess(df) # preprocessing using dataset.py
+            
+            
+
             gc.collect()
             save_memory(df)
             return df
