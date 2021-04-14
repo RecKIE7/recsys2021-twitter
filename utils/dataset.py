@@ -82,7 +82,7 @@ def get_media_index(media_index) :
     media_index["number_of_Video"] = media_index['media'].apply(lambda x : x.count("Video"))
     media_index["number_of_Photo"] = media_index['media'].apply(lambda x : x.count("Photo"))
     media_index["number_of_GIF"] = media_index['media'].apply(lambda x : x.count("GIF"))
-    media_index["number_of_media"] = media_index['media'].apply(lambda x : len(x))
+    media_index["number_of_media"] = media_index["number_of_Video"] + media_index["number_of_Photo"] + media_index["number_of_GIF"]
     media_index = media_index.drop('present_media', axis = 1)
     return media_index
 
