@@ -14,27 +14,28 @@ class Dataset():
         self.all_features_to_idx = dict(zip(conf.raw_features, range(len(conf.raw_features))))
 
         # save trian datas
-        self.load_data(path=conf.raw_lzo_path, save=True, save_dir='/hdd/preprocessing/train/')
-
-
-    def load_data(self, path=conf.raw_lzo_path, save=False, save_dir='.'):
+        # self.load_data_all(path=conf.raw_lzo_path, save=True, save_dir='/hdd/preprocessing/train/')
+        
+    def load_data_all(self, path=conf.raw_lzo_path, save=False, save_dir='.'):
         file_list = os.listdir(path)
         file_list = sorted(file_list)
 
         for file_name in tqdm(file_list):
-            df = dask_cudf.read_csv(f'{path}/{file_name}', sep='\x01', header=None, names=conf.raw_features+conf.labels)
-            df = df.repartition(npartitions=conf.n_partitions)
-            df = self.lzo_to_dataframe(df)
-            df = df.set_index('id', drop=True)
-            df, = dask.persist(df)
-            _ = wait(df)
+            if not os.path.exists(save_dir+file_name+'.parquet'):
+                client.restart()
+                df = dask_cudf.read_csv(f'{path}/{file_name}', sep='\x01', header=None, names=conf.raw_features+conf.labels)
+                df = df.repartition(npartitions=conf.n_partitions)
+                df = self.lzo_to_dataframe(df)
+                df = df.set_index('id', drop=True)
+                df, = dask.persist(df)
+                _ = wait(df)
 
-            df = self.preprocess(df)
+                df = self.preprocess(df)
 
-            if save:
-                save_parquet(df, save_dir+file_name+'.parquet')
-            
-            del df
+                if save:
+                    save_parquet(df, save_dir+file_name+'.parquet')
+                
+                del df
 
     def preprocess(self, df):
         df.columns = conf.raw_features + conf.labels
