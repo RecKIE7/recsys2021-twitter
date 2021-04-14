@@ -29,6 +29,19 @@ import core.config as conf
 class XGBoost:
     def __init__(self, df):
         self.df = df
+        self.xgb_parms = { 
+                'max_depth':8, 
+                'learning_rate':0.025, 
+                'subsample':0.85,
+                'colsample_bytree':0.35, 
+                'eval_metric':'logloss',
+                'objective':'binary:logistic',
+                'tree_method':'gpu_hist',
+                #'predictor': 'gpu_predictor',
+                'seed': 1,
+            }
+        self.TARGETS = ['reply', 'retweet', 'retweet_comment', 'like']
+        self.LR = [0.05,0.03,0.07,0.01]
     
     def feature_extract(self, train):
         label_names = ['reply', 'retweet', 'retweet_comment', 'like']
@@ -53,23 +66,12 @@ class XGBoost:
     
     def incremental_train(self, TARGET_id=3):
         model_prev = None
+        TARGET = self.TARGETS[TARGET_id]
+        self.xgb_parms['learning_rate'] = self.LR[TARGET_id]
+
         for i, train in tqdm(enumerate(self.df)):
-            xgb_parms = { 
-                'max_depth':8, 
-                'learning_rate':0.025, 
-                'subsample':0.85,
-                'colsample_bytree':0.35, 
-                'eval_metric':'logloss',
-                'objective':'binary:logistic',
-                'tree_method':'gpu_hist',
-                #'predictor': 'gpu_predictor',
-                'seed': 1,
-            }
-            TARGETS = ['reply', 'retweet', 'retweet_comment', 'like']
-            TARGET = TARGETS[TARGET_id]
+            
             RMV = self.feature_extract(train)
-            LR = [0.05,0.03,0.07,0.01]
-            xgb_parms['learning_rate'] = LR[TARGET_id]
 
             dtrain = xgb.DMatrix(data=train.drop(RMV, axis=1).compute().to_pandas(),
                                 label=train[TARGET].compute().values)
@@ -77,14 +79,14 @@ class XGBoost:
             gc.collect()
 
             if model_prev:
-                model = xgb.train(xgb_parms, 
+                model = xgb.train(self.xgb_parms, 
                                 dtrain=dtrain,
                                 num_boost_round=500,
                                 xgb_model=model_prev,
                                 ) 
 
             else:
-                model = xgb.train(xgb_parms, 
+                model = xgb.train(self.xgb_parms, 
                                 dtrain=dtrain,
                                 num_boost_round=500,
                                 ) 
