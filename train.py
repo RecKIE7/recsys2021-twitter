@@ -1,31 +1,36 @@
 import os
 import fire
-import core.config as conf
 from tqdm import tqdm
 
+import core.config as conf
+
+
+from utils.dataiter import Dataiter
+from models.model.XGBoost import XGBoost
+from models.network import Network
 
 class Train(object):
     def __init__(self):
-        # self.dataset = Dataset(training_flag=True)
-        self.df = Dataiter(conf.raw_lzo_path) # test => ./test
-        self.model = XGBoost(self.df)
+        self.df = Dataiter(conf.raw_lzo_path) 
 
-        self.train() 
-        # for i, d in enumerate(self.df):
-        #     print(len(d))
-        #     if i == 10:
-        #         break
+        if conf.net_structure == 'xgboost':
+            model = XGBoost(self.df)
+        else:
+            print('Unidentified Network... exit')
+            exit()
 
+        self.model = Network(model)
+        
     def train(self):
-        # train
-        self.model.incremental_train(3) # Like only
+        self.model.train(conf.LIKE) # Like only
+    
+
+    # def predict(self):
+    #     print('predict')
+    #     pred = self.model.predict(3) # Like only
+    #     print(pred)
     
 
 
 if __name__ == "__main__":
-    
-    # from utils.dataset import *
-    from utils.dataiter import Dataiter
-    from models.XGBoost import XGBoost
-
     fire.Fire(Train)

@@ -55,7 +55,7 @@ class XGBoost:
         DONT_USE += label_names
         return [c for c in DONT_USE if c in train.columns]
     
-    def incremental_train(self, TARGET_id=3):
+    def train(self, TARGET_id=3):
         model_prev = None
         TARGET = self.TARGETS[TARGET_id]
         self.xgb_parms['learning_rate'] = self.LR[TARGET_id]
@@ -82,14 +82,23 @@ class XGBoost:
             gc.collect()  
 
             #save model
-            model_path = f'/hdd/cpu_models/model-{TARGET}-{i}.xgb'
+            model_path = f'/hdd/cpu_models_1/model-{TARGET}-{i}.xgb'
             joblib.dump(model, model_path) 
             model_prev = model
             del model
             gc.collect()  
 
-
-
+    def predict(self, TARGET_id=3):
+        TARGET = self.TARGETS[TARGET_id]
+        valid = self.df
+        RMV = self.feature_extract(valid)
+        model = joblib.load( f'/hdd/cpu_models/model-'+TARGET+'-288.xgb' )
+        dvalid = xgb.DMatrix(data=valid.drop(RMV, axis=1) ,label=valid[TARGET].values)
+        pred = model.predict(dvalid)
+        del dvalid
+        _=gc.collect()
+        
+        return pred
 
 
             

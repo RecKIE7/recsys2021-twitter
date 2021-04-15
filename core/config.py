@@ -19,3 +19,12 @@ used_features = ['creator_id', 'engager_id', 'tweet_id', 'tweet_type', 'language
 # parameters
 n_workers = 1
 n_partitions = 16
+
+# network structure
+net_structure = 'xgboost'
+
+# target name
+REPLY = 0
+RETWEET = 1
+COMMNET = 2
+LIKE = 3
