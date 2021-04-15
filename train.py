@@ -25,12 +25,6 @@ class Train(object):
         self.model.train(conf.LIKE) # Like only
     
 
-    # def predict(self):
-    #     print('predict')
-    #     pred = self.model.predict(3) # Like only
-    #     print(pred)
-    
-
 
 if __name__ == "__main__":
     fire.Fire(Train)
