@@ -38,12 +38,12 @@ class Dataset:
 
         df['reply_timestamp']   = df['reply_timestamp'].fillna(0)
         df['retweet_timestamp'] = df['retweet_timestamp'].fillna(0)
-        df['retweet_with_comment_timestamp'] = df['retweet_with_comment_timestamp'].fillna(0)
+        df['comment_timestamp'] = df['retweet_with_comment_timestamp'].fillna(0)
         df['like_timestamp']    = df['like_timestamp'].fillna(0)
 
         df['reply_timestamp']   = df['reply_timestamp'].astype(np.uint32)
         df['retweet_timestamp'] = df['retweet_timestamp'].astype(np.uint32)
-        df['retweet_with_comment_timestamp'] = df['retweet_with_comment_timestamp'].astype(np.uint32)
+        df['comment_timestamp'] = df['comment_timestamp'].astype(np.uint32)
         df['like_timestamp']    = df['like_timestamp'].astype(np.uint32)
 
         df['tweet_timestamp']         = df['tweet_timestamp'].astype( np.uint32 )
