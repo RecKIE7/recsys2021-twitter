@@ -11,14 +11,14 @@ class Dataset:
         self.all_features_to_idx = dict(zip(conf.raw_features, range(len(conf.raw_features))))
 
 
-    def preprocess(self, df):
+    def preprocess(self, df, TARGET_id=conf.LIKE):
         df = self.set_dataframe_types(df)
         # df = df.set_index('id')
         # df.columns = conf.raw_features + conf.labels
         df = df.drop('text_tokens', axis=1)
         df = feature_extraction(df, features=conf.used_features, labels=conf.labels) # extract 'used_features'
 
-        target = 'like' ########### engagement
+        target = conf.target[TARGET_id]
         for c in ([
             ['engager_id'],
             ['engager_id','tweet_type','language'],

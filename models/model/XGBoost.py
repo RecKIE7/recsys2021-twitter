@@ -18,7 +18,7 @@ from utils.evaluate import calculate_ctr, compute_rce, average_precision_score
 import core.config as conf
 
 class XGBoost:
-    def __init__(self, df):
+    def __init__(self, df, TARGET_id):
         self.model_name = conf.net_structure
         self.df = df
         self.xgb_parms = { 
@@ -33,6 +33,7 @@ class XGBoost:
                 'seed': 1,
             }
         self.TARGETS = conf.target
+        self.TARGET_id = TARGET_id
         self.LR = [0.05,0.03,0.07,0.01]
     
     def feature_extract(self, train):
@@ -55,10 +56,10 @@ class XGBoost:
         DONT_USE += self.TARGETS
         return [c for c in DONT_USE if c in train.columns]
     
-    def train(self, TARGET_id=conf.LIKE):
+    def train(self):
         model_prev = None
-        TARGET = self.TARGETS[TARGET_id]
-        self.xgb_parms['learning_rate'] = self.LR[TARGET_id]
+        TARGET = self.TARGETS[self.TARGET_id]
+        self.xgb_parms['learning_rate'] = self.LR[self.TARGET_id]
 
         for i, train in tqdm(enumerate(self.df)):
             RMV = self.feature_extract(train)
@@ -88,8 +89,8 @@ class XGBoost:
             del model
             gc.collect()  
 
-    def predict(self, TARGET_id=conf.LIKE):
-        TARGET = self.TARGETS[TARGET_id]
+    def predict(self):
+        TARGET = self.TARGETS[self.TARGET_id]
         valid = self.df
         RMV = self.feature_extract(valid)
         model = joblib.load( f'/hdd/{self.model_name}/{self.model_name}_{TARGET}/model-'+TARGET+'-288.xgb' )

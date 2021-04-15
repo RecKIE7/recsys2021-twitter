@@ -25,6 +25,7 @@ net_structure = 'xgboost'
 
 # target name
 target = ['reply', 'retweet', 'retweet_comment', 'like']
+target_to_idx = {'reply':0, 'retweet':1, 'retweet_comment':2, 'like':3}
 REPLY = 0
 RETWEET = 1
 COMMNET = 2
