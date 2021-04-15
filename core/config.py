@@ -24,6 +24,7 @@ n_partitions = 16
 net_structure = 'xgboost'
 
 # target name
+target = ['reply', 'retweet', 'retweet_comment', 'like']
 REPLY = 0
 RETWEET = 1
 COMMNET = 2

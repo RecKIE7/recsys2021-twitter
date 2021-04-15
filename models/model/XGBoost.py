@@ -19,6 +19,7 @@ import core.config as conf
 
 class XGBoost:
     def __init__(self, df):
+        self.model_name = conf.net_structure
         self.df = df
         self.xgb_parms = { 
                 'max_depth':8, 
@@ -31,11 +32,10 @@ class XGBoost:
                 #'predictor': 'gpu_predictor',
                 'seed': 1,
             }
-        self.TARGETS = ['reply', 'retweet', 'retweet_comment', 'like']
+        self.TARGETS = conf.target
         self.LR = [0.05,0.03,0.07,0.01]
     
     def feature_extract(self, train):
-        label_names = ['reply', 'retweet', 'retweet_comment', 'like']
         DONT_USE = ['timestamp','creator_account_creation','engager_account_creation','engage_time',
                     'creator_account_creation', 'engager_account_creation',
                     'fold','tweet_id', 
@@ -52,10 +52,10 @@ class XGBoost:
                     'ypred','creator_count_combined','creator_user_fer_count_delta_time','creator_user_fing_count_delta_time','creator_user_fering_count_delta_time','creator_user_fing_count_mode','creator_user_fer_count_mode','creator_user_fering_count_mode'
                     
                 ]
-        DONT_USE += label_names
+        DONT_USE += self.TARGETS
         return [c for c in DONT_USE if c in train.columns]
     
-    def train(self, TARGET_id=3):
+    def train(self, TARGET_id=conf.LIKE):
         model_prev = None
         TARGET = self.TARGETS[TARGET_id]
         self.xgb_parms['learning_rate'] = self.LR[TARGET_id]
@@ -82,17 +82,17 @@ class XGBoost:
             gc.collect()  
 
             #save model
-            model_path = f'/hdd/cpu_models_1/model-{TARGET}-{i}.xgb'
+            model_path = f'/hdd/{self.model_name}/{self.model_name}_{TARGET}/model-{TARGET}-{i}.xgb'
             joblib.dump(model, model_path) 
             model_prev = model
             del model
             gc.collect()  
 
-    def predict(self, TARGET_id=3):
+    def predict(self, TARGET_id=conf.LIKE):
         TARGET = self.TARGETS[TARGET_id]
         valid = self.df
         RMV = self.feature_extract(valid)
-        model = joblib.load( f'/hdd/cpu_models/model-'+TARGET+'-288.xgb' )
+        model = joblib.load( f'/hdd/{self.model_name}/{self.model_name}_{TARGET}/model-'+TARGET+'-288.xgb' )
         dvalid = xgb.DMatrix(data=valid.drop(RMV, axis=1) ,label=valid[TARGET].values)
         pred = model.predict(dvalid)
         del dvalid
