@@ -152,4 +152,5 @@ results.csv
 */results.csv
 references
 **/references/
-
+log
+tmp/

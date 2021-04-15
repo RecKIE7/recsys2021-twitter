@@ -7,19 +7,11 @@ import matplotlib.pyplot as plt
 import pandas as pd, numpy as np, gc
 from tqdm import tqdm
 import joblib
-import dask.multiprocessing
 import cudf, cupy, time
-from numba import jit, njit, prange
-from sklearn.metrics import precision_recall_curve, auc, log_loss
-# from sklearn.model_selection import train_test_split
-from dask_ml.model_selection import train_test_split
 import xgboost as xgb
 
-dask.config.set(schedular='process')
 pd.set_option('display.max_columns', 500)
 
-from utils.cuda_cluster import *
-from utils.preprocessing import read_data, factorize_small_cardinality
 from utils.util import *
 from utils.evaluate import calculate_ctr, compute_rce, average_precision_score
 from utils.dataiter import Dataiter
