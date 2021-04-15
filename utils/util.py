@@ -81,4 +81,4 @@ def compute_rce(gt , pred, nafill=True, verbose=0):
     return (1.0 - cross_entropy/strawman_cross_entropy)*100.0
 
 def split_join(ds, sep):
-    return ds.str.replace('\t', '_')
+    return ds.replace('\t', '_')

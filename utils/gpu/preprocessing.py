@@ -4,7 +4,7 @@ sys.path.append('..')
 import dask as dask, dask_cudf
 from dask.distributed import Client, wait, progress
 from dask_cuda import LocalCUDACluster
-from utils.cuda_cluster import client
+from utils.gpu.cuda_cluster import client
 import tensorflow as tf
 import core.config as conf
 
