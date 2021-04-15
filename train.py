@@ -21,8 +21,8 @@ class Train(object):
 
         self.model = Network(model)
         
-    def train(self):
-        self.model.train(conf.LIKE) # Like only
+    def train(self, target=conf.LIKE):
+        self.model.train(target) 
     
 
 
