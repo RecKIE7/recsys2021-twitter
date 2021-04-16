@@ -54,6 +54,7 @@ class XGBoost:
                     
                 ]
         DONT_USE += self.TARGETS
+        DONT_USE += conf.labels
         return [c for c in DONT_USE if c in train.columns]
     
     def train(self):
@@ -83,7 +84,7 @@ class XGBoost:
             gc.collect()  
 
             #save model
-            model_path = f'/hdd/{self.model_name}/{self.model_name}_{TARGET}/model-{TARGET}-{i}.xgb'
+            model_path = f'/hdd/models/{self.model_name}/{self.model_name}_{TARGET}/model-{TARGET}-{i}.xgb'
             joblib.dump(model, model_path) 
             model_prev = model
             del model
@@ -93,8 +94,8 @@ class XGBoost:
         TARGET = self.TARGETS[self.TARGET_id]
         valid = self.df
         RMV = self.feature_extract(valid)
-        model = joblib.load( f'/hdd/{self.model_name}/{self.model_name}_{TARGET}/model-'+TARGET+'-288.xgb' )
-        dvalid = xgb.DMatrix(data=valid.drop(RMV, axis=1) ,label=valid[TARGET].values)
+        model = joblib.load( f'/hdd/models/{self.model_name}/{self.model_name}_{TARGET}/model-'+TARGET+'-288.xgb' )
+        dvalid = xgb.DMatrix(data=valid.drop(RMV, axis=1))
         pred = model.predict(dvalid)
         del dvalid
         _=gc.collect()
