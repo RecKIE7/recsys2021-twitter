@@ -12,6 +12,7 @@ class Dataiter(Dataset):
         self.current = 0    
         self.stop = len(self.file_list)
         self.TARGET_id = TARGET_id 
+        self.train = train
         # self.dataset = Dataset()
 
     def __iter__(self):

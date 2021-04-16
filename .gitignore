@@ -155,3 +155,5 @@ references
 log/
 tmp/
 test/
+*.pkl
+*.csv
