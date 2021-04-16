@@ -1,3 +1,4 @@
+import numpy as np
 class MTE_one_shot:
     
     def __init__(self, folds, smooth, seed=42):
@@ -43,6 +44,7 @@ class MTE_one_shot:
         agg_all[out_col] = (agg_all['sum_y_all']+self.smooth*self.mean)/(agg_all['count_y_all']+self.smooth)
         agg_all = agg_all.drop(['count_y_all','sum_y_all'],axis=1)
         self.agg_all = agg_all
+        np.save('agg_all.npy', agg_all)
         
         train.columns
         cols = ['fold',x_col] if isinstance(x_col,str) else ['fold']+x_col
@@ -57,6 +59,7 @@ class MTE_one_shot:
         return train
     
     def transform(self, test, x_col, out_col = None, out_dtype=None):
+        self.agg_all = np.load('agg_all.npy')
         if out_col is None:
             tag = x_col if isinstance(x_col,str) else '_'.join(x_col)
             out_col = f'TE_{tag}_{self.y_col}'
