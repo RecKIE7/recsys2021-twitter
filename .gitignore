@@ -152,5 +152,6 @@ results.csv
 */results.csv
 references
 **/references/
-log
+log/
 tmp/
+test/
