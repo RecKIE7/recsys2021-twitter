@@ -7,6 +7,7 @@ from utils.util import save_memory, split_join
 import numpy as np
 import cudf, cupy, time
 import pandas as pd, numpy as np, gc
+from sklearn.model_selection import KFold
 
 from tqdm import tqdm
 
@@ -19,19 +20,31 @@ def read_data(path, type='csv'):
 
 
 
-def feature_extraction(raw_df, features, labels):
-    df = raw_df[features + labels].copy()
-    del raw_df
-    
-    
-    # for labels
-    for label in (labels):
-        if label in (df.columns):
+def feature_extraction(raw_df, features, train=False):
+    labels = conf.labels
+    if train:
+        df = raw_df[features + labels].copy()
+        for label in (labels):
             label_name = label.split('_')[0]
             df.loc[df[label]<=0, label_name ] = 0
             df.loc[df[label]>0, label_name ] = 1
             df = df.drop([label], axis=1)
+    else:
+        df = raw_df[features].copy()
+        for label in (labels):
+            label_name = label.split('_')[0]
+            # df[label_name] = 0
 
+    del raw_df
+    # # for labels
+    # for label in (labels):
+    #         label_name = label.split('_')[0]
+    #         df.loc[df[label]<=0, label_name ] = 0
+    #         df.loc[df[label]>0, label_name ] = 1
+    #         df = df.drop([label], axis=1)
+    #     else:
+    #         label_name = label.split('_')[0]
+    #         df[label_name] = 0
 
     # for timestamp
     df['dt_day']  = pd.to_datetime( df['tweet_timestamp'] , unit='s' ).dt.day.values.astype( np.int8 )
@@ -107,7 +120,9 @@ def most_frequent_token(df, col, sep='\t'):
 
     return df
 
-def tartget_encoding( tra, col, tar, L=1, smooth_method=0  ):
+    
+
+def tartget_encoding( tra, col, tar, L=1, smooth_method=0):
     np.random.seed(L)
 
     cols = col+[tar]
@@ -189,3 +204,66 @@ def tartget_encoding( tra, col, tar, L=1, smooth_method=0  ):
     _ = gc.collect()
     predtrain[predtrain <= -999 ] = np.nan
     return predtrain.astype(np.float32)
+
+
+def target_encode_cudf_v3(train, valid, col, tar, n_folds=5, min_ct=0, smooth=20, 
+                          seed=42, shuffle=False, t2=None, v2=None, x=-1):
+    #
+    # col = column to target encode (or if list of columns then multiple groupby)
+    # tar = tar column encode against
+    # if min_ct>0 then all classes with <= min_ct are consider in new class "other"
+    # smooth = Bayesian smooth parameter
+    # seed = for 5 Fold if shuffle==True
+    # if x==-1 result appended to train and valid
+    # if x>=0 then result returned in column x of t2 and v2
+    #    
+    
+    # SINGLE OR MULTIPLE COLUMN
+    if not isinstance(col, list): col = [col]
+    if (min_ct>0)&(len(col)>1): 
+        print('WARNING: Setting min_ct=0 with multiple columns. Not implemented')
+        min_ct = 0
+    name = "_".join(col)
+        
+    # FIT ALL TRAIN
+    gf = cudf.from_pandas(train[col+[tar]]).reset_index(drop=True)
+    gf['idx'] = gf.index #needed because cuDF merge returns out of order
+    if min_ct>0: # USE MIN_CT?
+        other = gf.groupby(col[0]).size(); other = other[other<=min_ct].index
+        save = gf[col[0]].values.copy()
+        gf.loc[gf[col[0]].isin(other),col[0]] = -1
+    te = gf.groupby(col)[[tar]].agg(['mean','count']).reset_index(); te.columns = col + ['m','c']
+    mn = gf[tar].mean().astype('float32')
+    te['smooth'] = ((te['m']*te['c'])+(mn*smooth)) / (te['c']+smooth)
+    if min_ct>0: gf[col[0]] = save.copy()
+    
+    # PREDICT VALID
+    gf2 = cudf.from_pandas(valid[col]).reset_index(drop=True); gf2['idx'] = gf2.index
+    if min_ct>0: gf2.loc[gf2[col[0]].isin(other),col[0]] = -1
+    gf2 = gf2.merge(te[col+['smooth']], on=col, how='left', sort=False).sort_values('idx')
+    if x==-1: valid[f'TE_{name}_{tar}'] = gf2['smooth'].fillna(mn).astype('float32').to_array()
+    elif x>=0: v2[:,x] = gf2['smooth'].fillna(mn).astype('float32').to_array()
+    
+    # KFOLD ON TRAIN
+    tmp = cupy.zeros((train.shape[0]),dtype='float32'); gf['fold'] = 0
+    if shuffle: # shuffling is 2x slower
+        kf = KFold(n_folds, random_state=seed, shuffle=shuffle)
+        for k,(idxT,idxV) in enumerate(kf.split(train)): gf.loc[idxV,'fold'] = k
+    else:
+        fsize = train.shape[0]//n_folds
+        gf['fold'] = cupy.clip(gf.idx.values//fsize,0,n_folds-1)
+    for k in range(n_folds):
+        if min_ct>0: # USE MIN CT?
+            if k<n_folds-1: save = gf[col[0]].values.copy()
+            other = gf.loc[gf.fold!=k].groupby(col[0]).size(); other = other[other<=min_ct].index
+            gf.loc[gf[col[0]].isin(other),col[0]] = -1
+        te = gf.loc[gf.fold!=k].groupby(col)[[tar]].agg(['mean','count']).reset_index(); 
+        te.columns = col + ['m','c']
+        mn = gf.loc[gf.fold!=k,tar].mean().astype('float32')
+        te['smooth'] = ((te['m']*te['c'])+(mn*smooth)) / (te['c']+smooth)
+        gf = gf.merge(te[col+['smooth']], on=col, how='left', sort=False).sort_values('idx')
+        tmp[(gf.fold.values==k)] = gf.loc[gf.fold==k,'smooth'].fillna(mn).astype('float32').values
+        gf.drop_column('smooth')
+        if (min_ct>0)&(k<n_folds-1): gf[col[0]] = save.copy()
+    if x==-1: train[f'TE_{name}_{tar}'] = cupy.asnumpy(tmp.astype('float32'))
+    elif x>=0: t2[:,x] = cupy.asnumpy(tmp.astype('float32'))
