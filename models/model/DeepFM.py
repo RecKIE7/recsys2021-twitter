@@ -1,15 +1,22 @@
-import sys
+import sys, os
 sys.path.append('../..')
 
 import tqdm
 import numpy as np
 import pandas as pd
+
+import tensorflow as tf
 from tensorflow.keras import optimizers
-from deepctr.models import DeepFM
+from deepctr.models import DeepFM as DeepCTR
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from sklearn.model_selection import train_test_split
 from deepctr.feature_column import SparseFeat, DenseFeat, get_feature_names
+from deepctr.layers import custom_objects
+
 from sklearn import preprocessing
+from tqdm import tqdm
+
+from utils.preprocessing import *
 import core.config as conf
 
 class DeepFM:
@@ -19,15 +26,14 @@ class DeepFM:
         self.TARGETS = conf.target
         self.TARGET_id = TARGET_id
 
-        self.sparse_features = ['present_media', 'tweet_type', 'engaged_with_user_is_verified', 'enaging_user_is_verified', 'engagee_follows_engager']
-        self.dense_features = ['tweet_timestamp', 'engaged_with_user_follower_count', 'engaged_with_user_following_count', 'engaged_with_user_account_creation', 'enaging_user_follower_count', 'enaging_user_following_count', 'enaging_user_account_creation']
+        self.sparse_features = conf.sparse_features
+        self.dense_features = conf.dense_features
 
-
-    def feature_extract(self):
-        DONT_USE = ['text_ tokens', 'hashtags', 'tweet_id', 'engaged_with_user_id', 'enaging_user_id', 'language','present_links', 'present_domains', 'id']
+    def feature_extract(self, df):
+        DONT_USE = ['text_tokens', 'hashtags', 'tweet_id', 'creator_id', 'engager_id', 'language','links', 'domains', 'id']
         DONT_USE += self.TARGETS
         DONT_USE += conf.labels
-        return [c for c in DONT_USE if c in train.columns]
+        return [c for c in DONT_USE if c in df.columns]
     
     def preprocess(self, df):
         RMV = self.feature_extract(df)
@@ -47,20 +53,21 @@ class DeepFM:
 
     def train(self):
         model_prev = None
+        TARGET = self.TARGETS[self.TARGET_id]
 
         for i, train in tqdm(enumerate(self.df)):
+            
             train_model_input, fixlen_feature_columns = self.preprocess(train)
 
             if model_prev:
-                model = moodel_prev
-                del model_prev
+                model = model_prev
             else:
-                model = DeepFM(fixlen_feature_columns, fixlen_feature_columns, task='binary')
+                model = DeepCTR(fixlen_feature_columns, fixlen_feature_columns, task='binary')
                 model.compile("adam", "binary_crossentropy", metrics=['binary_crossentropy'])
-
-            history = model.fit(train_model_input, train['like'].values,
+            
+            history = model.fit(train_model_input, train[TARGET].values,
                 batch_size = 256,
-                epochs = 5,
+                epochs = 1,
                 verbose = 1,
                 validation_split = 0.2,)
 
@@ -70,8 +77,23 @@ class DeepFM:
 
             gc.collect()  
 
+
     def save_model(self, model, idx):
-        path = '/hdd/models/{self.model_name}/{self.model_name}_{TARGET}'
+        TARGET = self.TARGETS[self.TARGET_id]
+        path = f'/hdd/models/{self.model_name}/{self.model_name}_{TARGET}'
         os.makedirs(path, exist_ok=True)
-        model.save(f'{path}/{self.model_name}_{TARGET}_{idx}', save_format='tf')
+        model.save(f'{path}/{self.model_name}_{TARGET}_{idx}')
     
+    
+    def predict(self, model='0'):
+        TARGET = self.TARGETS[self.TARGET_id]
+        path = f'/hdd/models/{self.model_name}/{self.model_name}_{TARGET}'
+
+        test_model_input, fixlen_feature_columns = self.preprocess(self.df)
+        model = tf.keras.models.load_model(f'{path}/{self.model_name}_{TARGET}_{model}', custom_objects)
+        pred = model.predict(test_model_input, batch_size = 256)
+
+        del model
+        _ = gc.collect()
+
+        return pred

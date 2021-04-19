@@ -48,6 +48,7 @@ def feature_extraction(raw_df, features, train=False):
             # df[label_name] = 0
 
     del raw_df
+    
     # # for labels
     # for label in (labels):
     #         label_name = label.split('_')[0]
