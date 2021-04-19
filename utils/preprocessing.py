@@ -8,6 +8,8 @@ import numpy as np
 import cudf, cupy, time
 import pandas as pd, numpy as np, gc
 from sklearn.model_selection import KFold
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler
+
 
 from tqdm import tqdm
 
@@ -19,6 +21,16 @@ def read_data(path, type='csv'):
         print('cannot read data')
 
 
+def scaling(df, dense_features):
+    mms = MinMaxScaler(feature_range = (0, 1))
+    df[dense_features] = mms.fit_transform(df[dense_features])
+    return df
+
+def label_encoder(df, sparse_features):
+    for feat in sparse_features :
+        lbe = LabelEncoder()
+        df[feat] = lbe.fit_transform(df[feat])
+    return df
 
 def feature_extraction(raw_df, features, train=False):
     labels = conf.labels
@@ -36,6 +48,7 @@ def feature_extraction(raw_df, features, train=False):
             # df[label_name] = 0
 
     del raw_df
+    
     # # for labels
     # for label in (labels):
     #         label_name = label.split('_')[0]

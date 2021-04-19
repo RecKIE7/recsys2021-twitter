@@ -18,16 +18,17 @@ class Dataset:
         
         df = feature_extraction(df, features=conf.used_features, train=self.train) 
         
-        target = conf.target[TARGET_id]
-        for c in ([
-            ['engager_id'],
-            ['engager_id','tweet_type','language'],
-            ['creator_id'],
-            ['domains','media','tweet_type','language']
-            ]):
-            fname = 'TE_'+'_'.join(c)+'_'+target
-            print( fname )
-            df[fname] = tartget_encoding( df, c, target, 20, 0 )
+        if conf.target_encoding:
+            target = conf.target[TARGET_id]
+            for c in ([
+                ['engager_id'],
+                ['engager_id','tweet_type','language'],
+                ['creator_id'],
+                ['domains','media','tweet_type','language']
+                ]):
+                fname = 'TE_'+'_'.join(c)+'_'+target
+                print( fname )
+                df[fname] = tartget_encoding( df, c, target, 20, 0 )
 
         return df
     

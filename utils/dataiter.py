@@ -31,3 +31,7 @@ class Dataiter(Dataset):
             return df
         else:                           
             raise StopIteration 
+
+    def __len__(self):
+        return self.stop
+        

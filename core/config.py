@@ -1,6 +1,10 @@
 # use gpu
 gpu = False
 
+# network structure
+# structures = ['xgboost', 'deepfm']
+net_structure = 'deepfm'
+
 # path
 data_root = '/dataset/'
 project_root = '~/kie/recsys2021-twitter/'
@@ -16,12 +20,18 @@ labels = ["reply_timestamp", "retweet_timestamp", "comment_timestamp", "like_tim
 # used raw features
 used_features = ['creator_id', 'engager_id', 'tweet_id', 'tweet_type', 'language', 'creator_follower_count', 'creator_following_count', 'domains', 'media', 'tweet_timestamp']
 
+
+# for Deep FM
+if net_structure == 'deepfm':
+    sparse_features = ['media', 'tweet_type', 'creator_is_verified', 'engager_is_verified', 'creator_follows_engager']
+    dense_features = ['tweet_timestamp', 'creator_follower_count', 'creator_following_count', 'creator_account_creation', 'engager_follower_count', 'engager_following_count', 'engager_account_creation']
+    used_features = used_features + sparse_features + dense_features
+    used_features = list(set(used_features))
+
 # parameters
 n_workers = 1
 n_partitions = 16
 
-# network structure
-net_structure = 'xgboost'
 
 # target name
 target = ['reply', 'retweet', 'comment', 'like']
@@ -30,3 +40,4 @@ REPLY = 0
 RETWEET = 1
 COMMNET = 2
 LIKE = 3
+target_encoding = False # run target encoding?
