@@ -21,7 +21,7 @@ n_workers = 1
 n_partitions = 16
 
 # network structure
-net_structure = 'xgboost'
+net_structure = 'deepfm'
 
 # target name
 target = ['reply', 'retweet', 'comment', 'like']
@@ -30,3 +30,4 @@ REPLY = 0
 RETWEET = 1
 COMMNET = 2
 LIKE = 3
+target_encoding = False # run target encoding?

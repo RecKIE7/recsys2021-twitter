@@ -7,6 +7,7 @@ import core.config as conf
 
 from utils.dataiter import Dataiter
 from models.model.XGBoost import XGBoost
+from models.model.DeepFM import DeepFM
 from models.network import Network
 
 class Train(object):
@@ -16,6 +17,8 @@ class Train(object):
 
         if conf.net_structure == 'xgboost':
             model = XGBoost(self.df, TARGET_id)
+        elif conf.net_structure == 'deepfm':
+            model = DeepFM(self.df, TARGET_id)
         else:
             print('Unidentified Network... exit')
             exit()
