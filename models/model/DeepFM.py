@@ -55,6 +55,7 @@ class DeepFM:
         model_prev = None
         TARGET = self.TARGETS[self.TARGET_id]
 
+        j = 43
         for i, train in tqdm(enumerate(self.df)):
             
             train_model_input, fixlen_feature_columns = self.preprocess(train)
@@ -72,8 +73,9 @@ class DeepFM:
                 validation_split = 0.2,)
 
             model_prev = model
-            self.save_model(model, i)
+            self.save_model(model, j) # i
             del model
+            j += 1
 
             gc.collect()  
 
