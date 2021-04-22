@@ -7,6 +7,9 @@ from utils.util import save_memory, split_join
 import numpy as np
 import cudf, cupy, time
 import pandas as pd, numpy as np, gc
+from sklearn.model_selection import KFold
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler
+
 
 from tqdm import tqdm
 
@@ -18,18 +21,43 @@ def read_data(path, type='csv'):
         print('cannot read data')
 
 
+def scaling(df, dense_features):
+    mms = MinMaxScaler(feature_range = (0, 1))
+    df[dense_features] = mms.fit_transform(df[dense_features])
+    return df
 
-def feature_extraction(raw_df, features, labels):
-    df = raw_df[features + labels].copy()
+def label_encoder(df, sparse_features):
+    for feat in sparse_features :
+        lbe = LabelEncoder()
+        df[feat] = lbe.fit_transform(df[feat])
+    return df
+
+def feature_extraction(raw_df, features, train=False):
+    labels = conf.labels
+    if train:
+        df = raw_df[features + labels].copy()
+        for label in (labels):
+            label_name = label.split('_')[0]
+            df.loc[df[label]<=0, label_name ] = 0
+            df.loc[df[label]>0, label_name ] = 1
+            df = df.drop([label], axis=1)
+    else:
+        df = raw_df[features].copy()
+        for label in (labels):
+            label_name = label.split('_')[0]
+            # df[label_name] = 0
+
     del raw_df
     
-
-    # for labels
-    for label in (labels):
-        label_name = label.split('_')[0]
-        df.loc[df[label]<=0, label_name ] = 0
-        df.loc[df[label]>0, label_name ] = 1
-
+    # # for labels
+    # for label in (labels):
+    #         label_name = label.split('_')[0]
+    #         df.loc[df[label]<=0, label_name ] = 0
+    #         df.loc[df[label]>0, label_name ] = 1
+    #         df = df.drop([label], axis=1)
+    #     else:
+    #         label_name = label.split('_')[0]
+    #         df[label_name] = 0
 
     # for timestamp
     df['dt_day']  = pd.to_datetime( df['tweet_timestamp'] , unit='s' ).dt.day.values.astype( np.int8 )
@@ -105,7 +133,9 @@ def most_frequent_token(df, col, sep='\t'):
 
     return df
 
-def tartget_encoding( tra, col, tar, L=1, smooth_method=0  ):
+    
+
+def tartget_encoding( tra, col, tar, L=1, smooth_method=0):
     np.random.seed(L)
 
     cols = col+[tar]
