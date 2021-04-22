@@ -21,7 +21,7 @@ n_workers = 1
 n_partitions = 16
 
 # network structure
-net_structure = 'xgboost'
+net_structure = 'dnn'
 
 # target name
 REPLY = 0

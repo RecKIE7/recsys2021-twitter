@@ -22,8 +22,9 @@ class Dataiter(Dataset):
             self.current += 1           
             current_file = self.file_list[r]
             df = read_data(self.dir + current_file) # read data (to dataframe)
-            df = self.preprocess(df) # preprocessing using dataset.py
-
+            #df = self.preprocess(df) # preprocessing using dataset.py
+            df = self.raw_preprocess(df) # DNN
+            
             gc.collect()
             save_memory(df)
             return df

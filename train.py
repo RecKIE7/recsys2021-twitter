@@ -7,6 +7,7 @@ import core.config as conf
 
 from utils.dataiter import Dataiter
 from models.model.XGBoost import XGBoost
+from models.model.DNN import DNN
 from models.network import Network
 
 class Train(object):
@@ -15,6 +16,8 @@ class Train(object):
 
         if conf.net_structure == 'xgboost':
             model = XGBoost(self.df)
+        elif conf.net_structure == 'dnn' :
+            model = DNN(self.df)
         else:
             print('Unidentified Network... exit')
             exit()
