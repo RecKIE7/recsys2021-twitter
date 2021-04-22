@@ -27,6 +27,8 @@ class Dataiter(Dataset):
             
             print(current_file)
             self.current_file = current_file
+            # df = self.raw_preprocess(df, self.TARGET_id) # DNN
+
 
             gc.collect()
             save_memory(df)
