@@ -33,10 +33,10 @@ class Dataset:
     
     def raw_preprocess(self, df, TARGET_id=conf.LIKE) : 
         df = self.set_dataframe_types(df)
-        labels = ['reply_timestamp', 'retweet_timestamp', 'retweet_with_comment_timestamp', 'like_timestamp']
+        labels = ['reply_timestamp', 'retweet_timestamp', 'comment_timestamp', 'like_timestamp']
         df['reply'] = df['reply_timestamp'].apply(lambda x: 1 if x > 0 else 0).astype(np.int32)
         df['retweet'] = df['retweet_timestamp'].apply(lambda x: 1 if x > 0 else 0).astype(np.int32)
-        df['comment'] = df['retweet_with_comment_timestamp'].apply(lambda x: 1 if x > 0 else 0).astype(np.int32)
+        df['comment'] = df['comment_timestamp'].apply(lambda x: 1 if x > 0 else 0).astype(np.int32)
         df['like'] = df['like_timestamp'].apply(lambda x: 1 if x > 0 else 0).astype(np.int32) 
         df = df.drop(labels, axis=1)
        

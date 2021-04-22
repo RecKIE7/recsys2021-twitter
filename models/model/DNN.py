@@ -22,7 +22,7 @@ from utils.evaluate import calculate_ctr, compute_rce, average_precision_score
 import core.config as conf
 
 class DNN:
-    def __init__(self, df):
+    def __init__(self, df, TARGET_id):
         super().__init__()
         self.df = df
         self.TARGETS = ['reply', 'retweet', 'retweet_comment', 'like']
@@ -61,7 +61,7 @@ class DNN:
                             Dense(1, activation = 'sigmoid')])
         model.compile(optimizer = optimizers.Adam(learning_rate = lr),
                       loss = 'binary_crossentropy', # softmax : sparse_categorical_crossentropy, sigmoid : binary_crossentropy
-                      metrics=['accuracy'])
+                      metrics=['binary_crossentropy'])
                 
         for i, train in tqdm(enumerate(self.df)):
             RMV = self.feature_extract(train)
