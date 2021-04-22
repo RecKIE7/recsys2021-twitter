@@ -8,12 +8,11 @@ import core.config as conf
 class Dataiter(Dataset):
     def __init__(self, path, TARGET_id=3, train=False):
         self.dir = path
-        self.file_list = sorted(os.listdir(path))
+        self.file_list = sorted(os.listdir(path))[43:]
         self.current = 0    
         self.stop = len(self.file_list)
         self.TARGET_id = TARGET_id 
         self.train = train
-        # self.dataset = Dataset()
 
     def __iter__(self):
         return self         
@@ -24,9 +23,12 @@ class Dataiter(Dataset):
             self.current += 1           
             current_file = self.file_list[r]
             df = read_data(self.dir + current_file) # read data (to dataframe)
-            df = self.raw_preprocess(df, self.TARGET_id) # DNN
+            df = self.preprocess(df, self.TARGET_id) # preprocessing using dataset.py
+            
+            print(current_file)
+            self.current_file = current_file
+            # df = self.raw_preprocess(df, self.TARGET_id) # DNN
 
-            #df = self.preprocess(df, self.TARGET_id) # preprocessing using dataset.py
 
             gc.collect()
             save_memory(df)
