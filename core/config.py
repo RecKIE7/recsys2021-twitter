@@ -3,7 +3,7 @@ gpu = False
 
 # network structure
 # structures = ['xgboost', 'deepfm']
-net_structure = 'deepfm'
+net_structure = 'dnn'
 
 # path
 data_root = '/dataset/'
