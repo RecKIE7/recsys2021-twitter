@@ -49,16 +49,6 @@ def feature_extraction(raw_df, features, train=False):
 
     del raw_df
     
-    # # for labels
-    # for label in (labels):
-    #         label_name = label.split('_')[0]
-    #         df.loc[df[label]<=0, label_name ] = 0
-    #         df.loc[df[label]>0, label_name ] = 1
-    #         df = df.drop([label], axis=1)
-    #     else:
-    #         label_name = label.split('_')[0]
-    #         df[label_name] = 0
-
     # for timestamp
     df['dt_day']  = pd.to_datetime( df['tweet_timestamp'] , unit='s' ).dt.day.values.astype( np.int8 )
     df['dt_dow']  = pd.to_datetime( df['tweet_timestamp'] , unit='s' ).dt.dayofweek.values.astype( np.int8 )
