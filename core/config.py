@@ -2,8 +2,8 @@
 gpu = False
 
 # network structure
-# structures = ['xgboost', 'deepfm']
-net_structure = 'dnn'
+# structures = ['xgboost', 'deepfm', 'dnn]
+net_structure = 'xgboost'
 
 # path
 data_root = '/dataset/'
@@ -40,4 +40,4 @@ REPLY = 0
 RETWEET = 1
 COMMNET = 2
 LIKE = 3
-target_encoding = False # run target encoding?
+target_encoding = 2 # run target encoding? (0:False, 1:simple_encoder, 2:MTE_encoder)

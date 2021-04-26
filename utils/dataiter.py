@@ -23,12 +23,14 @@ class Dataiter(Dataset):
             self.current += 1           
             current_file = self.file_list[r]
             df = read_data(self.dir + current_file) # read data (to dataframe)
-            df = self.preprocess(df, self.TARGET_id) # preprocessing using dataset.py
+
+            if conf.net_structure == 'xgboost':
+                df = self.preprocess(df, self.TARGET_id) # preprocessing using dataset.py
+            elif conf.net_structure == 'dnn':
+                df = self.raw_preprocess(df, self.TARGET_id) # DNN    
             
             print(current_file)
             self.current_file = current_file
-            # df = self.raw_preprocess(df, self.TARGET_id) # DNN
-
 
             gc.collect()
             save_memory(df)
