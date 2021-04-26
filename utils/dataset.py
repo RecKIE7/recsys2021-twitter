@@ -2,7 +2,9 @@ import sys, os
 sys.path.append('..')
 
 from tqdm import tqdm
+import pickle
 
+from utils.target_encode import MTE_one_shot
 from utils.preprocessing import *
 import core.config as conf
 
@@ -16,9 +18,9 @@ class Dataset:
         df = df.drop('text_tokens', axis=1)
         
         df = feature_extraction(df, features=conf.used_features, train=self.train) 
-        
-        if conf.target_encoding:
-            target = conf.target[TARGET_id]
+        target = conf.target[TARGET_id]
+
+        if conf.target_encoding == 1:    
             for c in ([
                 ['engager_id'],
                 ['engager_id','tweet_type','language'],
@@ -28,6 +30,33 @@ class Dataset:
                 fname = 'TE_'+'_'.join(c)+'_'+target
                 print( fname )
                 df[fname] = tartget_encoding( df, c, target, 20, 0 )
+
+        elif conf.target_encoding == 2:
+            for c in tqdm([
+                ['engager_id'],
+                ['engager_id','tweet_type','language'],
+                ['creator_id'],
+                ['domains','media','tweet_type','language']
+                ]):
+                
+                out_col = 'TE_'+'_'.join(c)+'_'+target
+                encoder_path = f'{out_col}.pkl'
+                
+                if os.path.exists(encoder_path):
+                    with open(encoder_path, 'rb') as f:
+                        encoder = pickle.load(f)
+                else:
+                    encoder = MTE_one_shot(folds=5,smooth=20)
+
+                if self.train:
+                    
+                    df = encoder.fit_transform(df, c, target, out_col=out_col, out_dtype='float32')
+                    with open(encoder_path, 'wb') as f:
+                        pickle.dump(encoder, f)
+                else:
+                    df = encoder.transform(df, c, out_col=out_col, out_dtype='float32')
+        
+            del encoder
 
         return df
     

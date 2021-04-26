@@ -155,5 +155,6 @@ references
 log/
 tmp/
 test/
+encoder/
 *.pkl
 *.csv
