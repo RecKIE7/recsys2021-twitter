@@ -8,7 +8,7 @@ import core.config as conf
 class Dataiter(Dataset):
     def __init__(self, path, TARGET_id=3, train=False):
         self.dir = path
-        self.file_list = sorted(os.listdir(path))[43:]
+        self.file_list = sorted(os.listdir(path))
         self.current = 0    
         self.stop = len(self.file_list)
         self.TARGET_id = TARGET_id 
