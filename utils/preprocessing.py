@@ -26,7 +26,13 @@ def scaling(df, dense_features):
     df[dense_features] = mms.fit_transform(df[dense_features])
     return df
 
-def grouping(x, base, div):
+def grouping(x, base, div, group=None):
+    if group :
+        x = x-base
+        for i in range(len(group)) :
+            if x < group[i] :
+                return i
+        return len(group)
     return (x-base)//div
 
 def label_encoder(df, sparse_features):
