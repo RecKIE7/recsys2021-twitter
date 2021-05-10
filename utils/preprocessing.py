@@ -13,9 +13,9 @@ from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 
 from tqdm import tqdm
 
-def read_data(path, type='csv'):
+def read_data(path, type='csv', sep='\x01', features=conf.raw_features+conf.labels):
     if type == 'csv':
-        df = pd.read_csv(f'{path}', sep='\x01', header=None, names=conf.raw_features+conf.labels)
+        df = pd.read_csv(f'{path}', sep=sep, header=None, names=features)
         return df
     else:
         print('cannot read data')
