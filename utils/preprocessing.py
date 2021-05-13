@@ -5,7 +5,6 @@ import core.config as conf
 from utils.util import save_memory, split_join
 
 import numpy as np
-import cudf, cupy, time
 import pandas as pd, numpy as np, gc
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
