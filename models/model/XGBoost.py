@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import pandas as pd, numpy as np, gc
 from tqdm import tqdm
 import joblib
-import cudf, cupy, time
 import xgboost as xgb
 
 pd.set_option('display.max_columns', 500)
