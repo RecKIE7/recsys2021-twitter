@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import pandas as pd, numpy as np, gc
 from tqdm import tqdm
 import joblib
-import cudf, cupy, time
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras import optimizers
