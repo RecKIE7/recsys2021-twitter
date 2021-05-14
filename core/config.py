@@ -18,7 +18,7 @@ raw_features = ["text_tokens", "hashtags", "tweet_id", "media", "links", "domain
 labels = ["reply_timestamp", "retweet_timestamp", "comment_timestamp", "like_timestamp"]
 
 # used raw features
-used_features = ['creator_id', 'engager_id', 'tweet_id', 'tweet_type', 'language', 'creator_follower_count', 'creator_following_count', 'domains', 'media', 'tweet_timestamp']
+used_features = ['creator_id', 'engager_id', 'tweet_id', 'tweet_type', 'language', "creator_account_creation", 'creator_follower_count', 'creator_following_count', 'domains', 'media', 'tweet_timestamp']
 
 
 # for Deep FM
@@ -40,4 +40,4 @@ REPLY = 0
 RETWEET = 1
 COMMNET = 2
 LIKE = 3
-target_encoding = 2 # run target encoding? (0:False, 1:simple_encoder, 2:MTE_encoder)
+target_encoding = 3 # run target encoding? (0:False, 1:simple_encoder, 2:MTE_encoder, 3:Grouping_encoder)
