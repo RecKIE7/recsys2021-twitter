@@ -9,9 +9,10 @@ from utils.preprocessing import *
 import core.config as conf
 
 class Dataset:
-    def __init__(self, train=False):
+    def __init__(self, train=False, target_encoding=conf.target_encoding):
         self.all_features_to_idx = dict(zip(conf.raw_features, range(len(conf.raw_features))))
         self.train = train
+        self.target_encoding = target_encoding
 
     def preprocess(self, df, TARGET_id=conf.LIKE):
         df = self.set_dataframe_types(df)
@@ -20,7 +21,7 @@ class Dataset:
         df = feature_extraction(df, features=conf.used_features, train=self.train) 
         target = conf.target[TARGET_id]
 
-        if conf.target_encoding == 1:    
+        if self.target_encoding == 1:    
             for c in ([
                 ['engager_id'],
                 ['engager_id','tweet_type','language'],
@@ -31,7 +32,7 @@ class Dataset:
                 print( fname )
                 df[fname] = tartget_encoding( df, c, target, 20, 0 )
 
-        elif conf.target_encoding == 2:
+        elif self.target_encoding == 2:
             for c in tqdm([
                 ['engager_id'],
                 ['engager_id','tweet_type','language'],
