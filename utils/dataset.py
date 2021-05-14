@@ -58,6 +58,34 @@ class Dataset:
                     df = encoder.transform(df, c, out_col=out_col, out_dtype='float32')
         
             del encoder
+            
+        elif conf.target_encoding == 3:
+            df['creator_account_creation_group'] = df['creator_account_creation'].apply(grouping, args=(1136041200, 31536000))
+            df['creator_follower_count_group'] = df['creator_follower_count'].apply(grouping, args=(0, 0, [10, 100, 1000, 100000]))
+
+            for c in tqdm([
+                ['creator_account_creation_group'],
+                ['creator_follower_count_group'],
+                ['creator_account_creation_group', 'creator_follower_count_group'],
+                ]):
+                
+                out_col = 'TE_'+'_'.join(c)+'_'+target
+                encoder_path = f'{out_col}.pkl'
+                
+                if os.path.exists(encoder_path):
+                    with open(encoder_path, 'rb') as f:
+                        encoder = pickle.load(f)
+                else:
+                    encoder = MTE_one_shot(folds=5,smooth=20)
+
+                if self.train:
+                    df = encoder.fit_transform(df, c, target, out_col=out_col, out_dtype='float32')
+                    with open(encoder_path, 'wb') as f:
+                        pickle.dump(encoder, f)
+                else:
+                    df = encoder.transform(df, c, out_col=out_col, out_dtype='float32')
+        
+            del encoder
 
         return df
     
