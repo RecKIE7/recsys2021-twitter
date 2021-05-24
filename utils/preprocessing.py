@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd, numpy as np, gc
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
-
+import pickle
 
 from tqdm import tqdm
 
@@ -72,7 +72,12 @@ def feature_extraction(raw_df, features, train=False):
 
     for col in (['language','tweet_type','media']):
         if col in df.columns:
-            df[col] = pd.factorize( df[col], sort=True )[0]
+            # df[col] = pd.factorize( df[col], sort=True )[0]
+            pkl_path = conf.dict_path+col+'_dict.pkl'
+            with open(pkl_path, 'rb') as f:
+                dictionary = pickle.load(f)
+            df[col] = df[col].apply(lambda x: dictionary[x])
+    
             gc.collect()
             df[col] = df[col].astype( np.uint8 )
             gc.collect()
