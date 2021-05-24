@@ -15,6 +15,7 @@ raw_lzo_path = '/hdd/twitter/raw_lzo/'
 dataset_path = '/hdd/twitter/dataset/'
 dataset_mini_path = '/hdd/twitter/dataset_mini/'
 dict_path = '/dataset/pickle/'
+pickle_data = '/dataset/pickle/'
 
 # features
 raw_features = ["text_tokens", "hashtags", "tweet_id", "media", "links", "domains", "tweet_type","language", "tweet_timestamp", "creator_id", "creator_follower_count", "creator_following_count", "creator_is_verified", "creator_account_creation","engager_id", "engager_follower_count", "engager_following_count", "engager_is_verified", "engager_account_creation", "creator_follows_engager"]
