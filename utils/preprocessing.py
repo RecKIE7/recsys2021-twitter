@@ -69,8 +69,8 @@ def feature_extraction(raw_df, features, train=False):
         gc.collect()
         df['media'] = df['media'].apply( lambda x:  '_'.join(x.split('\t')[:2]) )
         gc.collect()
-
-    for col in (['language','tweet_type','media']):
+    
+    for col in (['tweet_type','media']): # except language
         if col in df.columns:
             # df[col] = pd.factorize( df[col], sort=True )[0]
             pkl_path = conf.dict_path+col+'_dict.pkl'
