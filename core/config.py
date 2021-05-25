@@ -45,4 +45,3 @@ RETWEET = 1
 COMMNET = 2
 LIKE = 3
 target_encoding = 0 # run target encoding? (0:False, 1:simple_encoder, 2:MTE_encoder, 3:Grouping_encoder)
-
