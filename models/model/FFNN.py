@@ -26,8 +26,9 @@ class FFNN:
     def __init__(self, df, TARGET_id):
         super().__init__()
         self.df = df
-        self.TARGETS = ['reply', 'retweet', 'retweet_comment', 'like']
+        self.TARGETS = ['reply', 'retweet', 'comment', 'like']
         self.LR = [0.05,0.03,0.07,0.01]
+        self.TARGET_id = TARGET_id
                  
     def feature_extract(self, train):
         label_names = ['reply', 'retweet', 'comment', 'like']
@@ -45,17 +46,19 @@ class FFNN:
                     'same_language', 'nan_language','language',
                     'tw_hash', 'tw_freq_hash','tw_first_word', 'tw_second_word', 'tw_last_word', 'tw_llast_word',
                     'ypred','creator_count_combined','creator_user_fer_count_delta_time','creator_user_fing_count_delta_time','creator_user_fering_count_delta_time','creator_user_fing_count_mode','creator_user_fer_count_mode','creator_user_fering_count_mode'
-                   ]
+                ]
         DONT_USE += label_names
         DONT_USE += conf.labels
         return [c for c in DONT_USE if c in train.columns]
     
-    def scaling(self, df, target, TRAIN) :
+    def scaling(self, df, target, TRAIN):
         scaling_columns = ['creator_following_count', 'creator_follower_count', 'engager_follower_count', 
                            'engager_following_count', 'dt_dow', 'dt_hour', 'len_domains', 'creator_main_language', 'engager_main_language',
                            f'engager_feature_number_of_previous_{target}_engagement', 'number_of_engagements_positive']
         
         df = df.reset_index(drop=True)
+        print(df.columns)
+
         if TRAIN :
             standard_scaler = preprocessing.StandardScaler()
             standard_scaler.fit(df[scaling_columns])
@@ -68,13 +71,15 @@ class FFNN:
         df = df.fillna(df.mean())
         return df
     
-    def train(self, TARGET_id=3):
+    def train(self):
         model_prev = None
-        TARGET = self.TARGETS[TARGET_id]
-        lr = self.LR[TARGET_id]
         
+        TARGET = self.TARGETS[self.TARGET_id]
+        lr = self.LR[self.TARGET_id]
+        
+        input_dim = 15
         model = Sequential([
-            Dense(16, activation = 'relu', input_dim = X_train.shape[1]),
+            Dense(16, activation = 'relu', input_dim = input_dim),
             Dense(8, activation = 'relu'),
             Dense(4, activation = 'relu'),
             Dense(1, activation = 'sigmoid')
@@ -86,8 +91,6 @@ class FFNN:
         for i, train in tqdm(enumerate(self.df)):
             
             RMV = self.feature_extract(train)
-            train = preprocess(train, TARGET_id)
-            train = pickle_matching(train, TARGET_id)
             y_train = train[TARGET]
             X_train = train.drop(RMV, axis=1)
             del train
@@ -100,6 +103,7 @@ class FFNN:
                       y = y_train,
                       epochs = 5,
                       batch_size=32) 
+
             #save model
             model_path = f'/hdd/models/ffnn_pkl/ffnn--{TARGET}-{i}'
             model.save(model_path)
