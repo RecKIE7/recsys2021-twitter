@@ -23,14 +23,19 @@ from utils.dataset import *
 
 import core.config as conf
 
-class FFNN:
+class FFNN_ALL:
     def __init__(self, df, TARGET_id):
         super().__init__()
         self.df = df
         self.TARGET_id = TARGET_id
-        self.TARGETS = ['reply', 'retweet', 'comment', 'like']
-        self.LR = [0.05,0.03,0.07,0.01]
-                 
+        if TARGET_id != 4 :
+            self.TARGETS = [['reply', 'retweet', 'comment', 'like'][TARGET_id]]
+            self.LR = [[0.05,0.03,0.07,0.01][TARGET_id]]
+        else :
+            self.TARGETS = ['reply', 'retweet', 'comment', 'like']
+            self.LR = [0.05,0.03,0.07,0.01]
+                       
+
     def feature_extract(self, train):
         label_names = ['reply', 'retweet', 'comment', 'like']
         DONT_USE = ['tweet_timestamp','creator_account_creation','engager_account_creation','engage_time',
@@ -52,10 +57,14 @@ class FFNN:
         DONT_USE += conf.labels
         return [c for c in DONT_USE if c in train.columns]
     
-    def scaling(self, df, target, TRAIN):
+    def scaling(self, df, TRAIN):
         scaling_columns = ['creator_following_count', 'creator_follower_count', 'engager_follower_count', 
                            'engager_following_count', 'dt_dow', 'dt_hour', 'len_domains', 'creator_main_language', 'engager_main_language',
-                           f'engager_feature_number_of_previous_{target}_engagement', 'number_of_engagements_positive']
+                           'engager_feature_number_of_previous_like_engagement',
+                           'engager_feature_number_of_previous_reply_engagement',
+                           'engager_feature_number_of_previous_retweet_engagement',
+                           'engager_feature_number_of_previous_comment_engagement',
+                           'number_of_engagements_positive']
         
         df = df.reset_index(drop=True)
 
@@ -73,43 +82,49 @@ class FFNN:
     
     def train(self):
         model_prev = None
-
-        TARGET = self.TARGETS[self.TARGET_id]
-        lr = self.LR[self.TARGET_id]
+        lr = self.LR
         input_dim = 17
 
-        model = Sequential([
+        models = [Sequential([
             Dense(16, activation = 'relu', input_dim = input_dim),
             Dense(8, activation = 'relu'),
             Dense(4, activation = 'relu'),
             Dense(1, activation = 'sigmoid')
-        ])
-        model.compile(optimizer = 'adam',
-                      loss = 'binary_crossentropy', # softmax : sparse_categorical_crossentropy, sigmoid : binary_crossentropy
-                      metrics=['binary_crossentropy']) # sigmoid :binary_crossentropy
+        ])] * 4
         
+        for model in models :
+            model.compile(optimizer = 'adam',
+                          loss = 'binary_crossentropy', # softmax : sparse_categorical_crossentropy, sigmoid : binary_crossentropy
+                          metrics=['binary_crossentropy']) # sigmoid :binary_crossentropy
+
         for i, train in tqdm(enumerate(self.df)):
-            
             RMV = self.feature_extract(train)
-            y_train = train[TARGET]
-            X_train = train.drop(RMV, axis=1)
+            yt_train = train[self.TARGETS]
+            Xt_train = train.drop(RMV, axis=1)
             del train
             
-            X_train = self.scaling(X_train, TARGET, True)
+            Xt_train = self.scaling(Xt_train, True)
             
             gc.collect()
             
-            model.fit(x = X_train,
-                      y = y_train,
-                      epochs = 5,
-                      batch_size=32) 
+            for target in self.TARGETS :
+                idx = conf.target_to_idx[target]
+                X_train = Xt_train.drop(conf.drop_features[idx], axis = 1)
+                y_train = yt_train[target]
+                model = models[idx]
+                model.fit(x = X_train,
+                          y = y_train,
+                          epochs = 1,
+                          batch_size=32) 
 
-            #save model
-            model_path = f'/hdd/models/ffnn_pkl/ffnn--{TARGET}-{i}'
-            model.save(model_path)
+                #save model
+                model_path = f'/hdd/models/ffnn_pkl/ffnn--{target}-{i}'
+                model.save(model_path)
                 
-            del X_train
-            del y_train
+                del X_train
+                del y_train
+            del Xt_train
+            del yt_train
 
             gc.collect()  
 

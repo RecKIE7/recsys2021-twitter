@@ -10,6 +10,7 @@ from models.model.XGBoost import XGBoost
 from models.model.DNN import DNN
 from models.model.DeepFM import DeepFM
 from models.model.FFNN import FFNN
+from models.model.FFNN_ALL import FFNN_ALL
 from models.network import Network
 
 class Train(object):
@@ -27,6 +28,8 @@ class Train(object):
             model = DNN(self.df, TARGET_id)
         elif conf.net_structure == 'ffnn' :
             model = FFNN(self.df, TARGET_id)
+        elif conf.net_structure == 'ffnn_all':
+            model = FFNN_ALL(self.df, TARGET_id)
         else:
             print('Unidentified Network... exit')
             exit()

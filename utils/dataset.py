@@ -19,7 +19,7 @@ class Dataset:
         df = df.drop('text_tokens', axis=1)
         
         df = feature_extraction(df, features=conf.used_features, train=self.train) 
-        target = conf.target[TARGET_id]
+        #target = conf.target[TARGET_id]
 
         if conf.target_encoding == 1:    
             for c in ([
@@ -129,7 +129,7 @@ class Dataset:
         return df
     
     def pickle_matching(self, df, TARGET_id=conf.LIKE):
-        target = conf.target[TARGET_id]
+        #target = conf.target[TARGET_id]
         pickle_path = conf.dict_path
         user_main_language_path = pickle_path + "user_main_language.pkl"
 
@@ -182,7 +182,8 @@ class Dataset:
         del engagement_comment
 
         df['number_of_engagements_positive'] = df.apply(lambda x : x['engager_feature_number_of_previous_like_engagement'] + x['engager_feature_number_of_previous_retweet_engagement'] + x['engager_feature_number_of_previous_reply_engagement'] + x['engager_feature_number_of_previous_comment_engagement'], axis = 1)
-
+        
+        '''
         if target != "reply":
             df = df.drop('engager_feature_number_of_previous_reply_engagement', axis = 1)
             
@@ -194,9 +195,12 @@ class Dataset:
 
         if target != "comment":
             df = df.drop('engager_feature_number_of_previous_comment_engagement', axis = 1)
-
-        df[f'number_of_engagements_ratio_{target}'] = df.apply(lambda x : x[f'engager_feature_number_of_previous_{target}_engagement'] / x['number_of_engagements_positive'] if x['number_of_engagements_positive'] != 0 else 0, axis = 1)
-
+        '''
+        
+        df['number_of_engagements_ratio_reply'] = df.apply(lambda x : x['engager_feature_number_of_previous_reply_engagement'] / x['number_of_engagements_positive'] if x['number_of_engagements_positive'] != 0 else 0, axis = 1)
+        df['number_of_engagements_ratio_like'] = df.apply(lambda x : x['engager_feature_number_of_previous_like_engagement'] / x['number_of_engagements_positive'] if x['number_of_engagements_positive'] != 0 else 0, axis = 1)
+        df['number_of_engagements_ratio_retweet'] = df.apply(lambda x : x['engager_feature_number_of_previous_retweet_engagement'] / x['number_of_engagements_positive'] if x['number_of_engagements_positive'] != 0 else 0, axis = 1)
+        df['number_of_engagements_ratio_comment'] = df.apply(lambda x : x['engager_feature_number_of_previous_comment_engagement'] / x['number_of_engagements_positive'] if x['number_of_engagements_positive'] != 0 else 0, axis = 1)
 
         return df
 
