@@ -119,8 +119,94 @@ class Dataset:
         df['creator_follower_count']  = df['creator_follower_count'].astype( np.uint32 )
         df['creator_following_count'] = df['creator_following_count'].astype( np.uint32 )
         df['creator_account_creation']= df['creator_account_creation'].astype( np.uint32 )
+        df['engager_follower_count'] = df['engager_follower_count'].fillna(0)
         df['engager_follower_count']  = df['engager_follower_count'].astype( np.uint32 )
+        df['engager_following_count'] = df['engager_following_count'].fillna(0)
         df['engager_following_count'] = df['engager_following_count'].astype( np.uint32 )
+        df['engager_account_creation'] = df['engager_account_creation'].fillna(0)
         df['engager_account_creation']= df['engager_account_creation'].astype( np.uint32 )
 
         return df
+    
+    def pickle_matching(self, df, TARGET_id=conf.LIKE):
+        target = conf.target[TARGET_id]
+        pickle_path = conf.dict_path
+        user_main_language_path = pickle_path + "user_main_language.pkl"
+
+        if os.path.exists(user_main_language_path) :
+            with open(user_main_language_path, 'rb') as f :
+                user_main_language = pickle.load(f)
+        
+        language_dict_path = pickle_path + "language_dict.pkl"
+
+        if os.path.exists(language_dict_path ) :
+            with open(language_dict_path , 'rb') as f :
+                language_dict = pickle.load(f)
+        
+        df['language'] = df.apply(lambda x : language_dict[x['language']], axis = 1)
+        df['creator_main_language'] = df['creator_id'].map(user_main_language)
+        df['engager_main_language'] = df['engager_id'].map(user_main_language)
+        df['creator_and_engager_have_same_main_language'] = df['creator_main_language'] == df['engager_main_language']
+        df['is_tweet_in_creator_main_language'] = df['creator_main_language'] == df['language']
+        df['is_tweet_in_engager_main_language'] = df['engager_main_language'] == df['language']
+        df['creator_and_engager_have_same_main_language'] = df['creator_and_engager_have_same_main_language'].astype(np.int)
+        df['is_tweet_in_creator_main_language'] = df['is_tweet_in_creator_main_language'].astype(np.int)
+        df['is_tweet_in_engager_main_language'] = df['is_tweet_in_engager_main_language'].astype(np.int)
+
+        engagement_like_path = pickle_path + "engagement-like.pkl"
+        if os.path.exists(engagement_like_path ) :
+            with open(engagement_like_path , 'rb') as f :
+                engagement_like = pickle.load(f)
+        df['engager_feature_number_of_previous_like_engagement'] = df.apply(lambda x : engagement_like[x['engager_id']], axis = 1)
+        del engagement_like
+        
+        engagement_reply_path = pickle_path + "engagement-reply.pkl"
+        if os.path.exists(engagement_reply_path ) :
+            with open(engagement_reply_path , 'rb') as f :
+                engagement_reply = pickle.load(f)
+        df['engager_feature_number_of_previous_reply_engagement'] = df.apply(lambda x : engagement_reply[x['engager_id']], axis = 1)
+        del engagement_reply
+
+        engagement_retweet_path = pickle_path + "engagement-retweet.pkl"
+        if os.path.exists(engagement_retweet_path ) :
+            with open(engagement_retweet_path , 'rb') as f :
+                engagement_retweet = pickle.load(f)
+        df['engager_feature_number_of_previous_retweet_engagement'] = df.apply(lambda x : engagement_retweet[x['engager_id']], axis = 1)
+        del engagement_retweet
+
+        engagement_comment_path = pickle_path + "engagement-comment.pkl"
+        if os.path.exists(engagement_comment_path ) :
+            with open(engagement_comment_path , 'rb') as f :
+                engagement_comment = pickle.load(f)
+        df['engager_feature_number_of_previous_comment_engagement'] = df.apply(lambda x : engagement_comment[x['engager_id']], axis = 1)
+        del engagement_comment
+
+        df['number_of_engagements_positive'] = df.apply(lambda x : x['engager_feature_number_of_previous_like_engagement'] + x['engager_feature_number_of_previous_retweet_engagement'] + x['engager_feature_number_of_previous_reply_engagement'] + x['engager_feature_number_of_previous_comment_engagement'], axis = 1)
+
+        if target != "reply":
+            df = df.drop('engager_feature_number_of_previous_reply_engagement', axis = 1)
+            
+        if target != "like":
+            df = df.drop('engager_feature_number_of_previous_like_engagement', axis = 1)
+
+        if target != "retweet":
+            df = df.drop('engager_feature_number_of_previous_retweet_engagement', axis = 1)
+
+        if target != "comment":
+            df = df.drop('engager_feature_number_of_previous_comment_engagement', axis = 1)
+
+        df[f'number_of_engagements_ratio_{target}'] = df.apply(lambda x : x[f'engager_feature_number_of_previous_{target}_engagement'] / x['number_of_engagements_positive'] if x['number_of_engagements_positive'] != 0 else 0, axis = 1)
+
+
+        return df
+
+
+
+
+
+
+
+
+
+
+
