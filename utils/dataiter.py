@@ -28,7 +28,9 @@ class Dataiter(Dataset):
                 df = self.preprocess(df, self.TARGET_id) # preprocessing using dataset.py
             elif conf.net_structure == 'dnn':
                 df = self.raw_preprocess(df, self.TARGET_id) # DNN    
-            
+            elif conf.net_structure == 'ffnn' :
+                df = self.preprocess(df, self.TARGET_id)
+                
             print(current_file)
             self.current_file = current_file
 

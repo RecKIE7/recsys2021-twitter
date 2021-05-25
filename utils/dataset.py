@@ -21,7 +21,7 @@ class Dataset:
         df = feature_extraction(df, features=conf.used_features, train=self.train) 
         target = conf.target[TARGET_id]
 
-        if self.target_encoding == 1:    
+        if conf.target_encoding == 1:    
             for c in ([
                 ['engager_id'],
                 ['engager_id','tweet_type','language'],
@@ -32,7 +32,7 @@ class Dataset:
                 print( fname )
                 df[fname] = tartget_encoding( df, c, target, 20, 0 )
 
-        elif self.target_encoding == 2:
+        elif conf.target_encoding == 2:
             for c in tqdm([
                 ['engager_id'],
                 ['engager_id','tweet_type','language'],
