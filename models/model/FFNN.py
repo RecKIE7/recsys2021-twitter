@@ -19,7 +19,7 @@ pd.set_option('display.max_columns', 500)
 
 from utils.util import *
 from utils.evaluate import calculate_ctr, compute_rce, average_precision_score
-
+from utils.dataset import *
 import core.config as conf
 
 class FFNN:
@@ -82,8 +82,10 @@ class FFNN:
                       metrics=['binary_crossentropy'])
                 
         for i, train in tqdm(enumerate(self.df)):
+            
             RMV = self.feature_extract(train)
-
+            train = preprocess(train, TARGET_id)
+            train = pickle_matching(train, TARGET_id)
             y_train = train[TARGET]
             X_train = train.drop(RMV, axis=1)
             del train
