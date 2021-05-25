@@ -23,8 +23,8 @@ raw_features = ["text_tokens", "hashtags", "tweet_id", "media", "links", "domain
 labels = ["reply_timestamp", "retweet_timestamp", "comment_timestamp", "like_timestamp"]
 
 # used raw features
-used_features = ['creator_id', 'engager_id', 'tweet_id', 'tweet_type', 'language', "creator_account_creation", 'creator_follower_count', 'creator_following_count', 'domains', 'media', 'tweet_timestamp', 'engager_following_count', 'engager_follower_count']
 
+used_features = ['creator_id', 'engager_id', 'tweet_id', 'tweet_type', 'language', "creator_account_creation", 'creator_follower_count', 'creator_following_count', 'engager_follower_count', 'engager_following_count', 'domains', 'media', 'tweet_timestamp']
 
 # for Deep FM
 if net_structure == 'deepfm':
