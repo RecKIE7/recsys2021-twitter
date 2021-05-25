@@ -77,7 +77,7 @@ class FFNN:
 
         TARGET = self.TARGETS[self.TARGET_id]
         lr = self.LR[self.TARGET_id]
-        
+        input_dim = 7
         model = Sequential([
             Dense(16, activation = 'relu', input_dim = input_dim),
             Dense(8, activation = 'relu'),
