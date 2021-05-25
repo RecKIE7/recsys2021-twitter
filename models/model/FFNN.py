@@ -58,7 +58,8 @@ class FFNN:
                            f'engager_feature_number_of_previous_{target}_engagement', 'number_of_engagements_positive']
         
         df = df.reset_index(drop=True)
-        print(df.columns)
+        print(scaling_columns)
+        print(df[scaling_columns])
 
         if TRAIN :
             standard_scaler = preprocessing.StandardScaler()
@@ -77,7 +78,8 @@ class FFNN:
 
         TARGET = self.TARGETS[self.TARGET_id]
         lr = self.LR[self.TARGET_id]
-        input_dim = 7
+        input_dim = 17
+
         model = Sequential([
             Dense(16, activation = 'relu', input_dim = input_dim),
             Dense(8, activation = 'relu'),
