@@ -20,13 +20,15 @@ pd.set_option('display.max_columns', 500)
 from utils.util import *
 from utils.evaluate import calculate_ctr, compute_rce, average_precision_score
 from utils.dataset import *
+
 import core.config as conf
 
 class FFNN:
     def __init__(self, df, TARGET_id):
         super().__init__()
         self.df = df
-        self.TARGETS = ['reply', 'retweet', 'retweet_comment', 'like']
+        self.TARGET_id = TARGET_id
+        self.TARGETS = ['reply', 'retweet', 'comment', 'like']
         self.LR = [0.05,0.03,0.07,0.01]
                  
     def feature_extract(self, train):
@@ -70,11 +72,11 @@ class FFNN:
     
     def train(self, TARGET_id=3):
         model_prev = None
-        TARGET = self.TARGETS[TARGET_id]
-        lr = self.LR[TARGET_id]
+        TARGET = self.TARGETS[self.TARGET_id]
+        lr = self.LR[self.TARGET_id]
         
         model = Sequential([
-            Dense(16, activation = 'relu', input_dim = X_train.shape[1]),
+            Dense(16, activation = 'relu', input_dim = 17),
             Dense(8, activation = 'relu'),
             Dense(4, activation = 'relu'),
             Dense(1, activation = 'sigmoid')
@@ -86,8 +88,6 @@ class FFNN:
         for i, train in tqdm(enumerate(self.df)):
             
             RMV = self.feature_extract(train)
-            train = preprocess(train, TARGET_id)
-            train = pickle_matching(train, TARGET_id)
             y_train = train[TARGET]
             X_train = train.drop(RMV, axis=1)
             del train
