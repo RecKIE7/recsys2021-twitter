@@ -73,14 +73,16 @@ class FFNN:
         TARGET = self.TARGETS[TARGET_id]
         lr = self.LR[TARGET_id]
         
-        model = Sequential([Dense(64, activation = 'relu', input_dim = 12),
-                            Dense(32, activation = 'relu'),
-                            Dense(16, activation = 'relu'),
-                            Dense(1, activation = 'sigmoid')])
-        model.compile(optimizer = optimizers.Adam(learning_rate = lr),
+        model = Sequential([
+            Dense(16, activation = 'relu', input_dim = X_train.shape[1]),
+            Dense(8, activation = 'relu'),
+            Dense(4, activation = 'relu'),
+            Dense(1, activation = 'sigmoid')
+        ])
+        model.compile(optimizer = 'adam',
                       loss = 'binary_crossentropy', # softmax : sparse_categorical_crossentropy, sigmoid : binary_crossentropy
-                      metrics=['binary_crossentropy'])
-                
+                        metrics=['binary_crossentropy']) # sigmoid :binary_crossentropy
+        
         for i, train in tqdm(enumerate(self.df)):
             
             RMV = self.feature_extract(train)
@@ -97,7 +99,7 @@ class FFNN:
             model.fit(x = X_train,
                       y = y_train,
                       epochs = 5,
-                      batch_size=64) 
+                      batch_size=32) 
             #save model
             model_path = f'/hdd/models/ffnn_pkl/ffnn--{TARGET}-{i}'
             model.save(model_path)
