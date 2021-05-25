@@ -23,8 +23,6 @@ class Dataiter(Dataset):
             self.current += 1           
             current_file = self.file_list[r]
             df = read_data(self.dir + current_file) # read data (to dataframe)
-
-            
                 
             if conf.net_structure == 'dnn':
                 df = self.raw_preprocess(df, self.TARGET_id) # DNN    
