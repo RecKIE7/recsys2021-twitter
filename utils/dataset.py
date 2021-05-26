@@ -15,7 +15,7 @@ class Dataset:
         self.target_encoding = target_encoding
 
     def preprocess(self, df, TARGET_id=conf.LIKE):
-        target = conf.target[TARGET_id]
+        # target = conf.target[TARGET_id]
         df = self.set_dataframe_types(df)
         df = df.drop('text_tokens', axis=1)
         
@@ -147,6 +147,8 @@ class Dataset:
         df['language'] = df.apply(lambda x : language_dict[x['language']], axis = 1)
         df['creator_main_language'] = df['creator_id'].map(user_main_language)
         df['engager_main_language'] = df['engager_id'].map(user_main_language)
+        df['creator_main_language'] = df['creator_main_language'].astype(np.int32) 
+        df['engager_main_language'] = df['engager_main_language'].astype(np.int32)
         df['creator_and_engager_have_same_main_language'] = df['creator_main_language'] == df['engager_main_language']
         df['is_tweet_in_creator_main_language'] = df['creator_main_language'] == df['language']
         df['is_tweet_in_engager_main_language'] = df['engager_main_language'] == df['language']
