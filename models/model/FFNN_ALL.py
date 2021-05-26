@@ -69,7 +69,9 @@ class FFNN_ALL:
         
         df = df.reset_index(drop=True)
 
+
         if TRAIN:
+
             standard_scaler = preprocessing.StandardScaler()
             print(df.columns)
             print(df.dtypes)
