@@ -3,7 +3,7 @@ gpu = False
 
 # network structure
 # structures = ['xgboost', 'deepfm', 'dnn', 'ffnn']
-net_structure = 'ffnn'
+net_structure = 'ffnn_all'
 
 # path
 data_root = '/dataset/'
@@ -26,6 +26,22 @@ labels = ["reply_timestamp", "retweet_timestamp", "comment_timestamp", "like_tim
 
 used_features = ['creator_id', 'engager_id', 'tweet_id', 'tweet_type', 'language', "creator_account_creation", 'creator_follower_count', 'creator_following_count', 'engager_follower_count', 'engager_following_count', 'domains', 'media', 'tweet_timestamp']
 
+drop_features = [['engager_feature_number_of_previous_like_engagement', 'engager_feature_number_of_previous_retweet_engagement',
+                 'engager_feature_number_of_previous_comment_engagement', 'number_of_engagements_ratio_like', 
+                  'number_of_engagements_ratio_retweet', 'number_of_engagements_ratio_comment'],
+                 
+                 ['engager_feature_number_of_previous_like_engagement', 'engager_feature_number_of_previous_reply_engagement', 
+                  'engager_feature_number_of_previous_comment_engagement', 'number_of_engagements_ratio_like', 
+                 'number_of_engagements_ratio_reply', 'number_of_engagements_ratio_comment'],
+                 
+                 ['engager_feature_number_of_previous_like_engagement', 'engager_feature_number_of_previous_retweet_engagement', 
+                  'engager_feature_number_of_previous_reply_engagement', 'number_of_engagements_ratio_like', 
+                 'number_of_engagements_ratio_retweet', 'number_of_engagements_ratio_reply'],
+                 
+                 ['engager_feature_number_of_previous_retweet_engagement', 'engager_feature_number_of_previous_reply_engagement', 
+                  'engager_feature_number_of_previous_comment_engagement', 'number_of_engagements_ratio_retweet', 
+                 'number_of_engagements_ratio_reply', 'number_of_engagements_ratio_comment']]
+
 # for Deep FM
 if net_structure == 'deepfm':
     sparse_features = ['media', 'tweet_type', 'creator_is_verified', 'engager_is_verified', 'creator_follows_engager']
@@ -40,9 +56,10 @@ n_partitions = 16
 
 # target name
 target = ['reply', 'retweet', 'comment', 'like']
-target_to_idx = {'reply':0, 'retweet':1, 'comment':2, 'like':3}
+target_to_idx = {'reply':0, 'retweet':1, 'comment':2, 'like':3, 'all' : 4}
 REPLY = 0
 RETWEET = 1
 COMMNET = 2
 LIKE = 3
+ALL = 4
 target_encoding = 0 # run target encoding? (0:False, 1:simple_encoder, 2:MTE_encoder, 3:Grouping_encoder)
