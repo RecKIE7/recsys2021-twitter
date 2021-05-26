@@ -15,12 +15,11 @@ class Dataset:
         self.target_encoding = target_encoding
 
     def preprocess(self, df, TARGET_id=conf.LIKE):
+        target = conf.target[TARGET_id]
         df = self.set_dataframe_types(df)
         df = df.drop('text_tokens', axis=1)
         
         df = feature_extraction(df, features=conf.used_features, train=self.train) 
-        #target = conf.target[TARGET_id]
-
         if conf.target_encoding == 1:    
             for c in ([
                 ['engager_id'],
@@ -129,7 +128,9 @@ class Dataset:
         return df
     
     def pickle_matching(self, df, TARGET_id=conf.LIKE):
-        #target = conf.target[TARGET_id]
+        
+        # target = conf.target[TARGET_id]
+        
         pickle_path = conf.dict_path
         user_main_language_path = pickle_path + "user_main_language.pkl"
 
