@@ -3,7 +3,7 @@ import os
 from utils.dataiter import Dataset
 from utils.preprocessing import *
 from models.baseline.random_model import random_prediction_model
-from models.model.DeepFM import DeepFM
+from models.model.FFNN_ALL import FFNN_ALL
 from core.config import raw_features
 import core.config as conf
 from tqdm import tqdm
@@ -21,15 +21,18 @@ def parse_input_line(line):
 
 def evaluate_test_set():
     path = '/hdd/twitter/raw_lzo/' # ./test
-    part_files = sorted([os.path.join(path, f) for f in os.listdir(path) if 'part' in f])[:3]
+    part_files = sorted([os.path.join(path, f) for f in os.listdir(path) if 'part' in f])[:1]
+    model_path = '/hdd/models/ffnn_pkl/'
     ds = Dataset()
-    with open('submission/results.csv', 'w') as output:
+    with open('../submission/results.csv', 'w') as output:
         for file in tqdm(part_files):
-            test_df = ds.preprocess(read_data(file))
-            pred_reply = DeepFM(test_df, conf.REPLY).predict(model='0') 
-            pred_retweet = DeepFM(test_df, conf.RETWEET).predict(model='0') 
-            pred_comment = DeepFM(test_df, conf.COMMNET).predict(model='0') 
-            pred_like = DeepFM(test_df, conf.LIKE).predict(model='0') 
+            df = read_data(file)
+            df = ds.pickle_matching(ds.preprocess(df, TARGET_id=conf.REPLY))
+
+            pred_reply = FFNN_ALL(df, conf.REPLY).predict(model_path) 
+            pred_retweet = FFNN_ALL(df, conf.RETWEET).predict(model_path) 
+            pred_comment = FFNN_ALL(df, conf.COMMNET).predict(model_path) 
+            pred_like = FFNN_ALL(df, conf.LIKE).predict(model_path) 
 
             with open(file, 'r') as f:
                 for i, line in enumerate(f.readlines()):
@@ -38,10 +41,9 @@ def evaluate_test_set():
                     retweet_pred = pred_retweet[i][0]
                     quote_pred = pred_comment[i][0]
                     fav_pred = pred_like[i][0]
-                    # fav_pred = float_formatter(pred_like[i])
                     output.write(f'{tweet_id},{user_id},{reply_pred},{retweet_pred},{quote_pred},{fav_pred}\n')
 
-            del test_df
+            del df
 
 if __name__ == "__main__":
     evaluate_test_set()

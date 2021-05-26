@@ -30,8 +30,8 @@ class FFNN_ALL:
         self.df = df
         self.TARGET_id = TARGET_id
         if TARGET_id != 4 :
-            self.TARGETS = [['reply', 'retweet', 'comment', 'like'][TARGET_id]]
-            self.LR = [[0.05,0.03,0.07,0.01][TARGET_id]]
+            self.TARGETS = ['reply', 'retweet', 'comment', 'like']
+            self.LR = [0.05,0.03,0.07,0.01]
         else :
             self.TARGETS = ['reply', 'retweet', 'comment', 'like']
             self.LR = [0.05,0.03,0.07,0.01]
@@ -69,12 +69,8 @@ class FFNN_ALL:
         
         df = df.reset_index(drop=True)
 
-
         if TRAIN:
-
             standard_scaler = preprocessing.StandardScaler()
-            print(df.columns)
-            print(df.dtypes)
             
             standard_scaler.fit(df[scaling_columns])
             pickle.dump(standard_scaler, open(conf.scaler_path + 'scaler.pkl','wb'))
@@ -111,6 +107,7 @@ class FFNN_ALL:
             
             Xt_train = self.scaling(Xt_train, True)
             
+            
             gc.collect()
             
             for target in self.TARGETS :
@@ -139,17 +136,19 @@ class FFNN_ALL:
         valid = self.df
         RMV = self.feature_extract(valid)
         X_valid = valid.drop(RMV, axis=1)
-        del valid
         
-        X_valid = self.scaling(X_valid, True)
+        del valid
+        print(X_valid.columns)
+        
+        X_valid = self.scaling(X_valid, False)
+        X_valid = X_valid.drop(conf.drop_features[self.TARGET_id], axis = 1)
         print(X_valid.columns)
         
         gc.collect()
                              
-        model = tf.keras.models.load_model(f'{model_path}/ffnn_{TARGET}')
+        model = tf.keras.models.load_model(f'{model_path}/ffnn--{TARGET}-0')
 
         pred = model.predict(X_valid)
-        _=gc.collect()
         
         return pred
         

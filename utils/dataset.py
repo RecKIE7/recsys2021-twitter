@@ -127,10 +127,8 @@ class Dataset:
 
         return df
     
-    def pickle_matching(self, df, TARGET_id=conf.LIKE):
-        
-        # target = conf.target[TARGET_id]
-        
+    def pickle_matching(self, df):
+                
         pickle_path = conf.dict_path
         user_main_language_path = pickle_path + "user_main_language.pkl"
 
