@@ -67,7 +67,8 @@ class FFNN_ALL:
                            'number_of_engagements_positive']
         
         df = df.reset_index(drop=True)
-
+        print(df.dtypes)
+        print(df.columns)
         if TRAIN :
             standard_scaler = preprocessing.StandardScaler()
             standard_scaler.fit(df[scaling_columns])
