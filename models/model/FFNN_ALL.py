@@ -14,6 +14,7 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras import optimizers
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from tensorflow.keras.models import save_model,load_model
+import tensorflow as tf
 
 pd.set_option('display.max_columns', 500)
 
@@ -36,7 +37,7 @@ class FFNN_ALL:
             self.LR = [0.05,0.03,0.07,0.01]
                        
 
-    def feature_extract(self, train):
+    def feature_extract(self, train=True):
         label_names = ['reply', 'retweet', 'comment', 'like']
         DONT_USE = ['tweet_timestamp','creator_account_creation','engager_account_creation','engage_time',
                     'creator_account_creation', 'engager_account_creation',
@@ -68,8 +69,11 @@ class FFNN_ALL:
         
         df = df.reset_index(drop=True)
 
-        if TRAIN :
+        if TRAIN:
             standard_scaler = preprocessing.StandardScaler()
+            print(df.columns)
+            print(df.dtypes)
+            
             standard_scaler.fit(df[scaling_columns])
             pickle.dump(standard_scaler, open(conf.scaler_path + 'scaler.pkl','wb'))
         else :
@@ -128,22 +132,41 @@ class FFNN_ALL:
 
             gc.collect()  
 
-    def predict(self, TARGET_id=3):
-        TARGET = self.TARGETS[TARGET_id]
+    def predict(self, model_path):
+        TARGET = self.TARGETS[self.TARGET_id]
         valid = self.df
         RMV = self.feature_extract(valid)
-        y_valid = valid[TARGET]
         X_valid = valid.drop(RMV, axis=1)
         del valid
         
-        X_valid = self.scaling(X_valid, TARGET, True)
+        X_valid = self.scaling(X_valid, True)
+        print(X_valid.columns)
         
         gc.collect()
                              
-        model = joblib.load(f'/hdd/models/ffnn_pkl/ffnn--{TARGET}-288' )
+        model = tf.keras.models.load_model(f'{model_path}/ffnn_{TARGET}')
 
         pred = model.predict(X_valid)
         _=gc.collect()
         
         return pred
+        
+    # def predict_old(self, TARGET_id=3):
+    #     TARGET = self.TARGETS[TARGET_id]
+    #     valid = self.df
+    #     RMV = self.feature_extract(valid)
+    #     y_valid = valid[TARGET]
+    #     X_valid = valid.drop(RMV, axis=1)
+    #     del valid
+        
+    #     X_valid = self.scaling(X_valid, TARGET, True)
+        
+    #     gc.collect()
+                             
+    #     model = joblib.load(f'/hdd/models/ffnn_pkl/ffnn--{TARGET}-288' )
+
+    #     pred = model.predict(X_valid)
+    #     _=gc.collect()
+        
+    #     return pred
         
