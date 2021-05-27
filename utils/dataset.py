@@ -4,6 +4,7 @@ sys.path.append('..')
 from tqdm import tqdm
 import pickle
 
+from collections import defaultdict
 from utils.target_encode import MTE_one_shot
 from utils.preprocessing import *
 import core.config as conf
@@ -135,12 +136,14 @@ class Dataset:
         if os.path.exists(user_main_language_path) :
             with open(user_main_language_path, 'rb') as f :
                 user_main_language = pickle.load(f)
+                user_main_language = defaultdict(int, user_main_language)
         
         language_dict_path = pickle_path + "language_dict.pkl"
 
         if os.path.exists(language_dict_path ) :
             with open(language_dict_path , 'rb') as f :
                 language_dict = pickle.load(f)
+                language_dict = defaultdict(int, language_dict)
         
         df['language'] = df.apply(lambda x : language_dict[x['language']], axis = 1)
         df['creator_main_language'] = df['creator_id'].map(user_main_language)
@@ -158,6 +161,8 @@ class Dataset:
         if os.path.exists(engagement_like_path ) :
             with open(engagement_like_path , 'rb') as f :
                 engagement_like = pickle.load(f)
+                engagement_like = defaultdict(int, engagement_like)
+
         df['engager_feature_number_of_previous_like_engagement'] = df.apply(lambda x : engagement_like[x['engager_id']], axis = 1)
         del engagement_like
         
@@ -165,6 +170,9 @@ class Dataset:
         if os.path.exists(engagement_reply_path ) :
             with open(engagement_reply_path , 'rb') as f :
                 engagement_reply = pickle.load(f)
+                engagement_reply = defaultdict(int, engagement_reply)
+
+
         df['engager_feature_number_of_previous_reply_engagement'] = df.apply(lambda x : engagement_reply[x['engager_id']], axis = 1)
         del engagement_reply
 
@@ -172,6 +180,9 @@ class Dataset:
         if os.path.exists(engagement_retweet_path ) :
             with open(engagement_retweet_path , 'rb') as f :
                 engagement_retweet = pickle.load(f)
+                engagement_retweet = defaultdict(int, engagement_retweet)
+
+
         df['engager_feature_number_of_previous_retweet_engagement'] = df.apply(lambda x : engagement_retweet[x['engager_id']], axis = 1)
         del engagement_retweet
 
@@ -179,6 +190,9 @@ class Dataset:
         if os.path.exists(engagement_comment_path ) :
             with open(engagement_comment_path , 'rb') as f :
                 engagement_comment = pickle.load(f)
+                engagement_comment = defaultdict(int, engagement_comment)
+
+
         df['engager_feature_number_of_previous_comment_engagement'] = df.apply(lambda x : engagement_comment[x['engager_id']], axis = 1)
         del engagement_comment
 
