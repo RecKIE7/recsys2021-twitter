@@ -138,11 +138,9 @@ class FFNN_ALL:
         X_valid = valid.drop(RMV, axis=1)
         
         del valid
-        print(X_valid.columns)
         
         X_valid = self.scaling(X_valid, False)
         X_valid = X_valid.drop(conf.drop_features[self.TARGET_id], axis = 1)
-        print(X_valid.columns)
         
         gc.collect()
                              

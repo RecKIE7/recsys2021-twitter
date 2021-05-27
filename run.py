@@ -20,11 +20,11 @@ def parse_input_line(line):
 
 
 def evaluate_test_set():
-    path = '/hdd/twitter/raw_lzo/' # ./test
+    path = '/hdd/twitter/test_data/' # ./test
     part_files = sorted([os.path.join(path, f) for f in os.listdir(path) if 'part' in f])[:1]
     model_path = '/hdd/models/ffnn_pkl/'
     ds = Dataset()
-    with open('../submission/results.csv', 'w') as output:
+    with open('results.csv', 'w') as output:
         for file in tqdm(part_files):
             df = read_data(file)
             df = ds.pickle_matching(ds.preprocess(df, TARGET_id=conf.REPLY))
