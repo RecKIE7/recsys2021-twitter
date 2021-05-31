@@ -29,7 +29,7 @@ class Dataiter(Dataset):
             else:
                 df = self.preprocess(df, self.TARGET_id) # preprocessing using dataset.py
 
-            df = self.pickle_matching(df, self.TARGET_id) # FFNN    
+            df = self.pickle_matching(df) # FFNN    
             
             print(current_file)
             self.current_file = current_file

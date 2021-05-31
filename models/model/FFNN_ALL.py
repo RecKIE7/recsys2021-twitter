@@ -65,7 +65,12 @@ class FFNN_ALL:
                            'engager_feature_number_of_previous_reply_engagement',
                            'engager_feature_number_of_previous_retweet_engagement',
                            'engager_feature_number_of_previous_comment_engagement',
-                           'number_of_engagements_positive']
+                           'number_of_engagements_positive',
+                           'creator_feature_number_of_previous_like_engagement',
+                           'creator_feature_number_of_previous_reply_engagement',
+                           'creator_feature_number_of_previous_retweet_engagement',
+                           'creator_feature_number_of_previous_comment_engagement',
+                           'creator_number_of_engagements_positive']
         
         df = df.reset_index(drop=True)
 
@@ -83,8 +88,6 @@ class FFNN_ALL:
         return df
     
     def train(self):
-        model_prev = None
-        lr = self.LR
         input_dim = 17
 
         models = [Sequential([
@@ -149,23 +152,4 @@ class FFNN_ALL:
         pred = model.predict(X_valid)
         
         return pred
-        
-    # def predict_old(self, TARGET_id=3):
-    #     TARGET = self.TARGETS[TARGET_id]
-    #     valid = self.df
-    #     RMV = self.feature_extract(valid)
-    #     y_valid = valid[TARGET]
-    #     X_valid = valid.drop(RMV, axis=1)
-    #     del valid
-        
-    #     X_valid = self.scaling(X_valid, TARGET, True)
-        
-    #     gc.collect()
-                             
-    #     model = joblib.load(f'/hdd/models/ffnn_pkl/ffnn--{TARGET}-288' )
-
-    #     pred = model.predict(X_valid)
-    #     _=gc.collect()
-        
-    #     return pred
         
