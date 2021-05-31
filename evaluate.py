@@ -36,11 +36,24 @@ reply_rce = compute_rce(pred['reply_pred'], df['reply'])
 like_rce = compute_rce(pred['like_pred'], df['like'])
 comment_rce = compute_rce(pred['comment_pred'], df['comment'])
 retweet_rce = compute_rce(pred['retweet_pred'], df['retweet'])
-print('rce:', reply_rce, like_rce, comment_rce, retweet_rce)
+print()
+print('***************rce***************')
+print('reply:', reply_rce)
+print('like:', like_rce)
+print('comment:', comment_rce)
+print('retweet:', retweet_rce)
 
 
 reply_ap = average_precision_score(df['reply'], pred['reply_pred'])
 like_ap = average_precision_score(df['like'], pred['like_pred'])
 comment_ap = average_precision_score(df['comment'], pred['comment_pred'])
 retweet_ap = average_precision_score(df['retweet'], pred['retweet_pred'])
-print('ap:', reply_ap, like_ap, comment_ap, retweet_ap)
+
+print()
+print('***************ap***************')
+print('reply:', reply_ap)
+print('like:', like_ap)
+print('comment:', comment_ap)
+print('retweet:', retweet_ap)
+
+
