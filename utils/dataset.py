@@ -234,7 +234,7 @@ class Dataset:
         ############ creator mapping ############
         '''
 
-        engagement_like_path = pickle_path + "creator_engagement-like.pkl"
+        engagement_like_path = pickle_path + "creator-engagement-like.pkl"
         if os.path.exists(engagement_like_path ) :
             with open(engagement_like_path , 'rb') as f :
                 engagement_like = pickle.load(f)
@@ -243,7 +243,7 @@ class Dataset:
         df['creator_feature_number_of_previous_like_engagement'] = df.apply(lambda x : engagement_like[x['creator_id']], axis = 1)
         del engagement_like
         
-        engagement_reply_path = pickle_path + "creator_engagement-reply.pkl"
+        engagement_reply_path = pickle_path + "creator-engagement-reply.pkl"
         if os.path.exists(engagement_reply_path ) :
             with open(engagement_reply_path , 'rb') as f :
                 engagement_reply = pickle.load(f)
@@ -253,7 +253,7 @@ class Dataset:
         df['creator_feature_number_of_previous_reply_engagement'] = df.apply(lambda x : engagement_reply[x['creator_id']], axis = 1)
         del engagement_reply
 
-        engagement_retweet_path = pickle_path + "creator_engagement-retweet.pkl"
+        engagement_retweet_path = pickle_path + "creator-engagement-retweet.pkl"
         if os.path.exists(engagement_retweet_path ) :
             with open(engagement_retweet_path , 'rb') as f :
                 engagement_retweet = pickle.load(f)
@@ -263,7 +263,7 @@ class Dataset:
         df['creator_feature_number_of_previous_retweet_engagement'] = df.apply(lambda x : engagement_retweet[x['creator_id']], axis = 1)
         del engagement_retweet
 
-        engagement_comment_path = pickle_path + "creator_engagement-comment.pkl"
+        engagement_comment_path = pickle_path + "creator-engagement-comment.pkl"
         if os.path.exists(engagement_comment_path ) :
             with open(engagement_comment_path , 'rb') as f :
                 engagement_comment = pickle.load(f)
