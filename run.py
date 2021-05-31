@@ -20,7 +20,7 @@ def parse_input_line(line):
 
 
 def evaluate_test_set():
-    path = '/hdd/twitter/test_data/' # ./test
+    path = './test' # ./test
     part_files = sorted([os.path.join(path, f) for f in os.listdir(path) if 'part' in f])[:1]
     model_path = '/hdd/models/ffnn_pkl/'
     ds = Dataset()
