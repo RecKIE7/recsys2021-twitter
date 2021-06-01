@@ -8,6 +8,7 @@ from collections import defaultdict
 from utils.target_encode import MTE_one_shot
 from utils.preprocessing import *
 import core.config as conf
+from transformers import *
 
 class Dataset:
     def __init__(self, train=False, target_encoding=conf.target_encoding):
@@ -18,7 +19,7 @@ class Dataset:
     def preprocess(self, df, TARGET_id=conf.LIKE):
         # target = conf.target[TARGET_id]
         df = self.set_dataframe_types(df)
-        df = df.drop('text_tokens', axis=1)
+        # df = df.drop('text_tokens', axis=1)
         
         df = feature_extraction(df, features=conf.used_features, train=self.train) 
         if conf.target_encoding == 1:    
@@ -294,10 +295,15 @@ class Dataset:
         df['creator_number_of_engagements_ratio_retweet'] = df.apply(lambda x : x['creator_feature_number_of_previous_retweet_engagement'] / x['creator_number_of_engagements_positive'] if x['creator_number_of_engagements_positive'] != 0 else 0, axis = 1)
         df['creator_number_of_engagements_ratio_comment'] = df.apply(lambda x : x['creator_feature_number_of_previous_comment_engagement'] / x['creator_number_of_engagements_positive'] if x['creator_number_of_engagements_positive'] != 0 else 0, axis = 1)
 
-
-
         return df
 
+
+    def tweet_features(self, df):
+        df['len_text_tokens'] = df['text_tokens'].apply(lambda x: len(x.split('\t')))
+        df['len_text_tokens_unique'] = df['text_tokens'].apply(lambda x: len(list(set(x.split('\t')))))
+        df['cnt_mention'] = df['text_tokens'].apply(lambda x: (x.split('\t').count('137')))
+        df = df.drop('text_tokens', axis=1)
+        return df
 
 
 
