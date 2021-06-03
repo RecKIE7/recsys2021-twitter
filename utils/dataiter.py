@@ -30,8 +30,9 @@ class Dataiter(Dataset):
                 df = self.preprocess(df, self.TARGET_id) # preprocessing using dataset.py
 
             df = self.pickle_matching(df) # FFNN    
+            df = self.tweet_features(df) # tweet features
             
-            print(current_file)
+            # print(len(df))
             self.current_file = current_file
 
             gc.collect()

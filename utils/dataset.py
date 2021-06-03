@@ -8,6 +8,7 @@ from collections import defaultdict
 from utils.target_encode import MTE_one_shot
 from utils.preprocessing import *
 import core.config as conf
+from transformers import *
 
 class Dataset:
     def __init__(self, train=False, target_encoding=conf.target_encoding):
@@ -18,7 +19,7 @@ class Dataset:
     def preprocess(self, df, TARGET_id=conf.LIKE):
         # target = conf.target[TARGET_id]
         df = self.set_dataframe_types(df)
-        df = df.drop('text_tokens', axis=1)
+        # df = df.drop('text_tokens', axis=1)
         
         df = feature_extraction(df, features=conf.used_features, train=self.train) 
         if conf.target_encoding == 1:    
@@ -234,7 +235,7 @@ class Dataset:
         ############ creator mapping ############
         '''
 
-        engagement_like_path = pickle_path + "creator_engagement-like.pkl"
+        engagement_like_path = pickle_path + "creator-engagement-like.pkl"
         if os.path.exists(engagement_like_path ) :
             with open(engagement_like_path , 'rb') as f :
                 engagement_like = pickle.load(f)
@@ -243,7 +244,7 @@ class Dataset:
         df['creator_feature_number_of_previous_like_engagement'] = df.apply(lambda x : engagement_like[x['creator_id']], axis = 1)
         del engagement_like
         
-        engagement_reply_path = pickle_path + "creator_engagement-reply.pkl"
+        engagement_reply_path = pickle_path + "creator-engagement-reply.pkl"
         if os.path.exists(engagement_reply_path ) :
             with open(engagement_reply_path , 'rb') as f :
                 engagement_reply = pickle.load(f)
@@ -253,7 +254,7 @@ class Dataset:
         df['creator_feature_number_of_previous_reply_engagement'] = df.apply(lambda x : engagement_reply[x['creator_id']], axis = 1)
         del engagement_reply
 
-        engagement_retweet_path = pickle_path + "creator_engagement-retweet.pkl"
+        engagement_retweet_path = pickle_path + "creator-engagement-retweet.pkl"
         if os.path.exists(engagement_retweet_path ) :
             with open(engagement_retweet_path , 'rb') as f :
                 engagement_retweet = pickle.load(f)
@@ -263,7 +264,7 @@ class Dataset:
         df['creator_feature_number_of_previous_retweet_engagement'] = df.apply(lambda x : engagement_retweet[x['creator_id']], axis = 1)
         del engagement_retweet
 
-        engagement_comment_path = pickle_path + "creator_engagement-comment.pkl"
+        engagement_comment_path = pickle_path + "creator-engagement-comment.pkl"
         if os.path.exists(engagement_comment_path ) :
             with open(engagement_comment_path , 'rb') as f :
                 engagement_comment = pickle.load(f)
@@ -294,10 +295,15 @@ class Dataset:
         df['creator_number_of_engagements_ratio_retweet'] = df.apply(lambda x : x['creator_feature_number_of_previous_retweet_engagement'] / x['creator_number_of_engagements_positive'] if x['creator_number_of_engagements_positive'] != 0 else 0, axis = 1)
         df['creator_number_of_engagements_ratio_comment'] = df.apply(lambda x : x['creator_feature_number_of_previous_comment_engagement'] / x['creator_number_of_engagements_positive'] if x['creator_number_of_engagements_positive'] != 0 else 0, axis = 1)
 
-
-
         return df
 
+
+    def tweet_features(self, df):
+        df['len_text_tokens'] = df['text_tokens'].apply(lambda x: len(x.split('\t')))
+        df['len_text_tokens_unique'] = df['text_tokens'].apply(lambda x: len(list(set(x.split('\t')))))
+        df['cnt_mention'] = df['text_tokens'].apply(lambda x: (x.split('\t').count('137')))
+        df = df.drop('text_tokens', axis=1)
+        return df
 
 
 

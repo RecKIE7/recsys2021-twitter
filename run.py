@@ -21,13 +21,16 @@ def parse_input_line(line):
 
 def evaluate_test_set():
     path = './test' # ./test
-    part_files = sorted([os.path.join(path, f) for f in os.listdir(path) if 'part' in f])[:1]
+    path = '/hdd/twitter/test_data/'
     model_path = '/hdd/models/ffnn_pkl/'
+
+    part_files = sorted([os.path.join(path, f) for f in os.listdir(path) if 'part' in f])
     ds = Dataset()
     with open('results.csv', 'w') as output:
         for file in tqdm(part_files):
             df = read_data(file)
             df = ds.pickle_matching(ds.preprocess(df, TARGET_id=conf.REPLY))
+            df = ds.tweet_features(df)
 
             pred_reply = FFNN_ALL(df, conf.REPLY).predict(model_path) 
             pred_retweet = FFNN_ALL(df, conf.RETWEET).predict(model_path) 

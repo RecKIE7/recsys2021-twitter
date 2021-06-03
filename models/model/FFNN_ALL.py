@@ -88,7 +88,7 @@ class FFNN_ALL:
         return df
     
     def train(self):
-        input_dim = 17
+        input_dim = 29 #17
 
         models = [Sequential([
             Dense(16, activation = 'relu', input_dim = input_dim),
@@ -148,6 +148,7 @@ class FFNN_ALL:
         gc.collect()
                              
         model = tf.keras.models.load_model(f'{model_path}/ffnn--{TARGET}-0')
+        print(X_valid.shape)
 
         pred = model.predict(X_valid)
         
