@@ -24,7 +24,8 @@ labels = ["reply_timestamp", "retweet_timestamp", "comment_timestamp", "like_tim
 
 # used raw features
 
-used_features = ['text_tokens', 'creator_id', 'engager_id', 'tweet_id', 'tweet_type', 'language', "creator_account_creation", 'creator_follower_count', 'creator_following_count', 'engager_follower_count', 'engager_following_count', 'domains', 'media', 'tweet_timestamp']
+
+used_features = ['creator_id', 'engager_id', 'tweet_id', 'tweet_type', 'language', "hashtags", "creator_account_creation", 'creator_follower_count', 'creator_following_count', 'engager_follower_count', 'engager_following_count', 'domains', 'media', 'tweet_timestamp']
 
 drop_features = [['engager_feature_number_of_previous_like_engagement', 'engager_feature_number_of_previous_retweet_engagement',
                  'engager_feature_number_of_previous_comment_engagement', 'number_of_engagements_ratio_like', 

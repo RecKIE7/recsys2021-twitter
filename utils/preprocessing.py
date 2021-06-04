@@ -83,7 +83,7 @@ def feature_extraction(raw_df, features, train=False):
             gc.collect()
 
     # most_frequent_token
-    for col in (['domains','links','hashtags']):
+    for col in (['domains','links']):
         if col in df.columns:
             df = most_frequent_token(df, col=col, sep='\t')
     
