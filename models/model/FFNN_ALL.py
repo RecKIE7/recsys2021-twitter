@@ -88,7 +88,7 @@ class FFNN_ALL:
         return df
     
     def train(self):
-        input_dim = 29 #17
+        input_dim = 30 #17
 
         models = [Sequential([
             Dense(16, activation = 'relu', input_dim = input_dim),
