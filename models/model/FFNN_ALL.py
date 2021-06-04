@@ -30,8 +30,8 @@ class FFNN_ALL:
         self.df = df
         self.TARGET_id = TARGET_id
         if TARGET_id != 4 :
-            self.TARGETS = [['reply', 'retweet', 'comment', 'like'][TARGET_id]]
-            self.LR = [[0.05,0.03,0.07,0.01][TARGET_id]]
+            self.TARGETS = ['reply', 'retweet', 'comment', 'like']
+            self.LR = [0.05,0.03,0.07,0.01]
         else :
             self.TARGETS = ['reply', 'retweet', 'comment', 'like']
             self.LR = [0.05,0.03,0.07,0.01]
@@ -65,16 +65,17 @@ class FFNN_ALL:
                            'engager_feature_number_of_previous_reply_engagement',
                            'engager_feature_number_of_previous_retweet_engagement',
                            'engager_feature_number_of_previous_comment_engagement',
-                           'number_of_engagements_positive']
+                           'number_of_engagements_positive',
+                           'creator_feature_number_of_previous_like_engagement',
+                           'creator_feature_number_of_previous_reply_engagement',
+                           'creator_feature_number_of_previous_retweet_engagement',
+                           'creator_feature_number_of_previous_comment_engagement',
+                           'creator_number_of_engagements_positive']
         
         df = df.reset_index(drop=True)
 
-
         if TRAIN:
-
             standard_scaler = preprocessing.StandardScaler()
-            print(df.columns)
-            print(df.dtypes)
             
             standard_scaler.fit(df[scaling_columns])
             pickle.dump(standard_scaler, open(conf.scaler_path + 'scaler.pkl','wb'))
@@ -87,9 +88,7 @@ class FFNN_ALL:
         return df
     
     def train(self):
-        model_prev = None
-        lr = self.LR
-        input_dim = 17
+        input_dim = 29 #17
 
         models = [Sequential([
             Dense(16, activation = 'relu', input_dim = input_dim),
@@ -110,6 +109,7 @@ class FFNN_ALL:
             del train
             
             Xt_train = self.scaling(Xt_train, True)
+            
             
             gc.collect()
             
@@ -139,36 +139,18 @@ class FFNN_ALL:
         valid = self.df
         RMV = self.feature_extract(valid)
         X_valid = valid.drop(RMV, axis=1)
+        
         del valid
         
-        X_valid = self.scaling(X_valid, True)
-        print(X_valid.columns)
+        X_valid = self.scaling(X_valid, False)
+        X_valid = X_valid.drop(conf.drop_features[self.TARGET_id], axis = 1)
         
         gc.collect()
                              
-        model = tf.keras.models.load_model(f'{model_path}/ffnn_{TARGET}')
+        model = tf.keras.models.load_model(f'{model_path}/ffnn--{TARGET}-0')
+        print(X_valid.shape)
 
         pred = model.predict(X_valid)
-        _=gc.collect()
         
         return pred
-        
-    # def predict_old(self, TARGET_id=3):
-    #     TARGET = self.TARGETS[TARGET_id]
-    #     valid = self.df
-    #     RMV = self.feature_extract(valid)
-    #     y_valid = valid[TARGET]
-    #     X_valid = valid.drop(RMV, axis=1)
-    #     del valid
-        
-    #     X_valid = self.scaling(X_valid, TARGET, True)
-        
-    #     gc.collect()
-                             
-    #     model = joblib.load(f'/hdd/models/ffnn_pkl/ffnn--{TARGET}-288' )
-
-    #     pred = model.predict(X_valid)
-    #     _=gc.collect()
-        
-    #     return pred
         
