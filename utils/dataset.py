@@ -129,7 +129,7 @@ class Dataset:
 
         return df
     
-    def pickle_matching(self, df):
+    def user_engagements(self, df):
                 
         pickle_path = conf.dict_path
 
@@ -296,6 +296,52 @@ class Dataset:
         df['creator_number_of_engagements_ratio_comment'] = df.apply(lambda x : x['creator_feature_number_of_previous_comment_engagement'] / x['creator_number_of_engagements_positive'] if x['creator_number_of_engagements_positive'] != 0 else 0, axis = 1)
 
         return df
+
+    def tweet_engagements(self, df):
+        pickle_path = conf.dict_path
+
+        ### 1 ###
+        tweet_engagement_path = pickle_path + "tweet_id_engagement_1.pkl"
+
+        if os.path.exists(tweet_engagement_path ) :
+            with open(tweet_engagement_path, 'rb') as f :
+                tweet_engagements = pickle.load(f)
+                tweet_engagements = defaultdict(lambda : -1, tweet_engagements)
+        
+        df['number_of_tweet_engagements'] = df.apply(lambda x : tweet_engagements[x['tweet_id']], axis = 1)
+
+        df1 = df[df['number_of_tweet_engagements'] != -1]
+        df = df[df['number_of_tweet_engagements'] == -1]
+
+        ### 2 ###
+        tweet_engagement_path = pickle_path + "tweet_id_engagement_2.pkl"
+
+        if os.path.exists(tweet_engagement_path ) :
+            with open(tweet_engagement_path, 'rb') as f :
+                tweet_engagements = pickle.load(f)
+                tweet_engagements = defaultdict(lambda : -1, tweet_engagements)
+
+        df['number_of_tweet_engagements'] = df.apply(lambda x : tweet_engagements[x['tweet_id']], axis = 1)
+
+        df2 = df[df['number_of_tweet_engagements'] != -1]
+        df = df[df['number_of_tweet_engagements'] == -1]
+
+        ### 3 ###
+        tweet_engagement_path = pickle_path + "tweet_id_engagement_3.pkl"
+
+        if os.path.exists(tweet_engagement_path ) :
+            with open(tweet_engagement_path, 'rb') as f :
+                tweet_engagements = pickle.load(f)
+                tweet_engagements = defaultdict(lambda : -1, tweet_engagements)
+
+        df['number_of_tweet_engagements'] = df.apply(lambda x : tweet_engagements[x['tweet_id']], axis = 1)
+
+        df = pd.concat([df1, df2, df])
+        del df1, df2
+        df = df.reset_index(drop=True)
+
+        return df
+
 
 
     def tweet_features(self, df):

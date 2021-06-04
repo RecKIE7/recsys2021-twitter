@@ -29,8 +29,11 @@ def evaluate_test_set():
     with open('results.csv', 'w') as output:
         for file in tqdm(part_files):
             df = read_data(file)
-            df = ds.pickle_matching(ds.preprocess(df, TARGET_id=conf.REPLY))
-            df = ds.tweet_features(df)
+            df = ds.preprocess(df, TARGET_id=conf.REPLY)
+            
+            df = ds.tweet_engagements(df) # tweet engagement
+            df = ds.user_engagements(df) # user engagement
+            df = ds.tweet_features(df) # tweet features
 
             pred_reply = FFNN_ALL(df, conf.REPLY).predict(model_path) 
             pred_retweet = FFNN_ALL(df, conf.RETWEET).predict(model_path) 
