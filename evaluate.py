@@ -12,6 +12,7 @@ from tqdm import tqdm
 
 
 path = '/hdd/twitter/test_data/part-210210-.7'
+path = '/hdd/twitter/test_data2/part-test'
 df = read_data(path)
 
 df['reply_timestamp']   = df['reply_timestamp'].fillna(0)
