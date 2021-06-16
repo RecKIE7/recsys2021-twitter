@@ -8,7 +8,7 @@ import core.config as conf
 from utils.dataiter import Dataiter
 from models.model.XGBoost import XGBoost
 from models.model.DNN import DNN
-from models.model.DeepFM import DeepFM
+# from models.model.DeepFM import DeepFM
 from models.model.FFNN import FFNN
 from models.model.FFNN_ALL import FFNN_ALL
 from models.network import Network
