@@ -151,7 +151,7 @@ class FFNN_ALL:
         
         gc.collect()
                              
-        model = tf.keras.models.load_model(f'{model_path}/ffnn--{TARGET}-0')
+        model = tf.keras.models.load_model(f'{model_path}/ffnn--{TARGET}-1')
         print(X_valid.shape)
 
         pred = model.predict(X_valid)
