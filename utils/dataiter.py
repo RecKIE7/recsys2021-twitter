@@ -33,7 +33,8 @@ class Dataiter(Dataset):
             df = self.user_engagements(df) # user engagement
             df = self.tweet_features(df) # tweet features
             
-            # print(len(df))
+            print(df.columns)
+            print(df.head())
             self.current_file = current_file
 
             gc.collect()
