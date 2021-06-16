@@ -16,14 +16,15 @@ dataset_path = '/hdd/twitter/dataset/'
 dataset_mini_path = '/hdd/twitter/dataset_mini/'
 dict_path = '/dataset/pickle/'
 pickle_data = '/dataset/pickle/'
+mini_pickle_data = '/dataset/mini_pickle/'
 scaler_path = '/dataset/preprocessing/'
-
+valid_path = '/hdd/twitter/valid/'
 # features
 raw_features = ["text_tokens", "hashtags", "tweet_id", "media", "links", "domains", "tweet_type","language", "tweet_timestamp", "creator_id", "creator_follower_count", "creator_following_count", "creator_is_verified", "creator_account_creation","engager_id", "engager_follower_count", "engager_following_count", "engager_is_verified", "engager_account_creation", "creator_follows_engager"]
 labels = ["reply_timestamp", "retweet_timestamp", "comment_timestamp", "like_timestamp"]
 
 # used raw features
-used_features = ['text_tokens', 'creator_id', 'engager_id', 'tweet_id', 'tweet_type', 'language', "hashtags", "creator_account_creation", 'creator_follower_count', 'creator_following_count', 'engager_follower_count', 'engager_following_count', 'domains', 'media', 'tweet_timestamp']
+used_features = ['creator_id', 'engager_id', 'tweet_id', 'tweet_type', 'language', "hashtags", "creator_account_creation", 'creator_follower_count', 'creator_following_count', 'engager_follower_count', 'engager_following_count', 'domains', 'media', 'tweet_timestamp']
 
 drop_features = [['engager_feature_number_of_previous_like_engagement', 'engager_feature_number_of_previous_retweet_engagement',
                  'engager_feature_number_of_previous_comment_engagement', 'number_of_engagements_ratio_like', 
