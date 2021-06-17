@@ -70,7 +70,11 @@ class FFNN_ALL:
                            'creator_feature_number_of_previous_reply_engagement',
                            'creator_feature_number_of_previous_retweet_engagement',
                            'creator_feature_number_of_previous_comment_engagement',
-                           'creator_number_of_engagements_positive']
+                           'creator_number_of_engagements_positive',
+                           'len_text_tokens',
+                           'len_text_tokens_unique',
+                           'cnt_mention',
+                            'number_of_tweet_engagements']
         
         df = df.reset_index(drop=True)
 
@@ -147,7 +151,7 @@ class FFNN_ALL:
         
         gc.collect()
                              
-        model = tf.keras.models.load_model(f'{model_path}/ffnn--{TARGET}-0')
+        model = tf.keras.models.load_model(f'{model_path}/ffnn--{TARGET}-1')
         print(X_valid.shape)
 
         pred = model.predict(X_valid)
