@@ -20,7 +20,6 @@ class Dataset:
         # target = conf.target[TARGET_id]
         df = self.set_dataframe_types(df)
         # df = df.drop('text_tokens', axis=1)
-        
         df = feature_extraction(df, features=conf.used_features, train=self.train) 
         if conf.target_encoding == 1:    
             for c in ([
@@ -115,7 +114,7 @@ class Dataset:
             df['retweet_timestamp'] = df['retweet_timestamp'].astype(np.uint32)
             df['comment_timestamp'] = df['comment_timestamp'].astype(np.uint32)
             df['like_timestamp']    = df['like_timestamp'].astype(np.uint32)
-
+        
         df['tweet_timestamp']         = df['tweet_timestamp'].astype( np.uint32 )
         df['creator_follower_count']  = df['creator_follower_count'].astype( np.uint32 )
         df['creator_following_count'] = df['creator_following_count'].astype( np.uint32 )
@@ -129,22 +128,37 @@ class Dataset:
 
         return df
     
-    def user_engagements(self, df):
+    def cal_valid_pickle(self, df) :
+        ## main language
+        lang_dict_path = conf.dict_path + 'language_dict.pkl'
+        pred_pickle_path = conf.pred_pickle_path + "user_main_language.pkl"
+
+        user_language = defaultdict(list)
+
+        for index, row in df.iterrows():
+            creator_id = row['creator_id']
+            language = row['language']
+            user_language[creator_id].append(language)
+
+        for user in user_language :
+            max_lang = max(user_language[user])
+            user_language[user] = max_lang
+
+
+        with open(pred_pickle_path, 'wb') as f:
+            pickle.dump(user_language, f)
+
+        del df, user_language
+    
+    def user_engagements(self, df, train=True):
                 
         pickle_path = conf.dict_path
-
+        pred_pickle_path = conf.pred_pickle_path
 
         '''
         ############ language mapping ############
         '''
 
-        user_main_language_path = pickle_path + "user_main_language.pkl"
-
-        if os.path.exists(user_main_language_path) :
-            with open(user_main_language_path, 'rb') as f :
-                user_main_language = pickle.load(f)
-                user_main_language = defaultdict(int, user_main_language)
-        
         language_dict_path = pickle_path + "language_dict.pkl"
 
         if os.path.exists(language_dict_path ) :
@@ -153,6 +167,30 @@ class Dataset:
                 language_dict = defaultdict(int, language_dict)
         
         df['language'] = df.apply(lambda x : language_dict[x['language']], axis = 1)
+        
+        
+        # main_language
+
+        user_main_language_path = pickle_path + "user_main_language.pkl"
+        pred_main_language_path = pred_pickle_path + "user_main_language.pkl"
+
+        if os.path.exists(user_main_language_path) :
+            with open(user_main_language_path, 'rb') as f :
+                user_main_language = pickle.load(f)
+
+        if train == False :
+            self.cal_valid_pickle(df)
+            if os.path.exists(pred_main_language_path) :
+                with open(pred_main_language_path, 'rb') as f :
+                    pred_main_language = pickle.load(f)
+
+            for user in pred_main_language :
+                if user not in user_main_language :
+                    user_main_language[user] = pred_main_language[user]
+            del pred_main_language
+
+        user_main_language = defaultdict(lambda : -1, user_main_language)
+
         df['creator_main_language'] = df['creator_id'].map(user_main_language)
         df['engager_main_language'] = df['engager_id'].map(user_main_language)
         df['creator_main_language'] = df['creator_main_language'].astype(np.int32) 

@@ -8,8 +8,8 @@ import core.config as conf
 class Dataiter(Dataset):
     def __init__(self, path, TARGET_id=3, train=False):
         self.dir = path
-        self.file_list = sorted(os.listdir(path))
-        self.current = 0    
+        self.file_list = sorted(os.listdir(path))[:1]
+        self.current = 0
         self.stop = len(self.file_list)
         self.TARGET_id = TARGET_id 
         self.train = train
@@ -30,7 +30,7 @@ class Dataiter(Dataset):
                 df = self.preprocess(df, self.TARGET_id) # preprocessing using dataset.py
 
             df = self.tweet_engagements(df) # tweet engagement
-            df = self.user_engagements(df) # user engagement
+            df = self.user_engagements(df, self.train) # user engagement
             df = self.tweet_features(df) # tweet features
             
             print(df.columns)

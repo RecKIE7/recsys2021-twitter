@@ -16,7 +16,7 @@ from models.network import Network
 class Train(object):
     def __init__(self, target='like'):
         TARGET_id = conf.target_to_idx[target]
-        self.df = Dataiter(conf.cross_valid_data, TARGET_id, train=True) 
+        self.df = Dataiter(conf.raw_lzo_path, TARGET_id, train=True) 
         
         if conf.net_structure == 'xgboost':
             model = XGBoost(self.df, TARGET_id)
