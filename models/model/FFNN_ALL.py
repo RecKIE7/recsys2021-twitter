@@ -30,8 +30,8 @@ class FFNN_ALL:
         self.df = df
         self.TARGET_id = TARGET_id
         if TARGET_id != 4 :
-            self.TARGETS = ['reply', 'retweet', 'comment', 'like']
-            self.LR = [0.05,0.03,0.07,0.01]
+            self.TARGETS = ['reply', 'retweet', 'comment', 'like'][self.TARGET_id]
+            self.LR = [0.05,0.03,0.07,0.01][self.TARGET_id]
         else :
             self.TARGETS = ['reply', 'retweet', 'comment', 'like']
             self.LR = [0.05,0.03,0.07,0.01]
@@ -128,7 +128,7 @@ class FFNN_ALL:
                           batch_size=32) 
 
                 #save model
-                model_path = f'/hdd/models/ffnn_pkl/ffnn--{target}-{i}'
+                model_path = f'/hdd/models/ffnn/ffnn--{target}-{i}'
                 model.save(model_path)
                 
                 del X_train
@@ -139,8 +139,9 @@ class FFNN_ALL:
             gc.collect()  
 
     def predict(self, model_path):
-        TARGET = self.TARGETS[self.TARGET_id]
+        TARGET = self.TARGETS
         valid = self.df
+        
         RMV = self.feature_extract(valid)
         X_valid = valid.drop(RMV, axis=1)
         
@@ -151,7 +152,7 @@ class FFNN_ALL:
         
         gc.collect()
                              
-        model = tf.keras.models.load_model(f'{model_path}/ffnn--{TARGET}-1')
+        model = tf.keras.models.load_model(f'{model_path}/ffnn--{TARGET}-0')
         print(X_valid.shape)
 
         pred = model.predict(X_valid)
