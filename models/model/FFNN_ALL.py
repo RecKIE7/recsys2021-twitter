@@ -25,7 +25,7 @@ from utils.dataset import *
 import core.config as conf
 
 class FFNN_ALL:
-    def __init__(self, df, TARGET_id):
+    def __init__(self, df, TARGET_id='reply'):
         super().__init__()
         self.df = df
         self.TARGET_id = TARGET_id
@@ -92,7 +92,7 @@ class FFNN_ALL:
         return df
     
     def train(self):
-        input_dim = 30 #17
+        input_dim = 34 #17
 
         models = [Sequential([
             Dense(16, activation = 'relu', input_dim = input_dim),
