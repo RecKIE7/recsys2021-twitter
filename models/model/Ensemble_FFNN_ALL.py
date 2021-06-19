@@ -136,55 +136,17 @@ class Ensemble_FFNN_ALL:
         df = df.fillna(df.mean())
         return df
     
-#     def train(self):
-#         for i in range(5):
-#             print(f'------ train ensemble model {i} ------')
-#             self._train(i)
         
     
     def train(self, ensemble_num=0):
-        
-
         for i, train in tqdm(enumerate(self.df)):
             for j in range(5):
                 print(f'------ train ensemble model {i} ------')
                 self._train(train, i, j)
 
-#             train = self.fill_with_default_value(train, ensemble_num)
-#             RMV = self.feature_extract(train)
-#             yt_train = train[self.TARGETS]
-#             Xt_train = train.drop(RMV, axis=1)
-#             del train
-            
-#             Xt_train = self.scaling(Xt_train, True)
-            
-            
-#             gc.collect()
-            
-#             for target in self.TARGETS :
-#                 print(target, self.TARGETS)
-#                 idx = conf.target_to_idx[target]
-#                 X_train = Xt_train.drop(conf.drop_features[idx], axis = 1)
-#                 y_train = yt_train[target]
-#                 model = models[idx]
-#                 model.fit(x = X_train,
-#                           y = y_train,
-#                           epochs = 1,
-#                           batch_size=32) 
-
-#                 #save model
-#                 model_path = f'{conf.model_path}/ensemble-{ensemble_num}/ffnn--{target}-{i}'
-#                 model.save(model_path)
-                
-#                 del X_train
-#                 del y_train
-#             del Xt_train
-#             del yt_train
-
-#             gc.collect()  
 
     def _train(self, train, i, ensemble_num):
-        input_dim = 30 #17
+        input_dim = 34 #17
 
 
         models = [Sequential([
