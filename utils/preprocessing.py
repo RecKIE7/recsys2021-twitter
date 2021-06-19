@@ -73,7 +73,7 @@ def feature_extraction(raw_df, features, train=False):
     for col in (['tweet_type','media']): # except language
         if col in df.columns:
             # df[col] = pd.factorize( df[col], sort=True )[0]
-            pkl_path = conf.dict_path+col+'_dict.pkl'
+            pkl_path = conf.pickle_data+col+'_dict.pkl'
             with open(pkl_path, 'rb') as f:
                 dictionary = pickle.load(f)
             df[col] = df[col].apply(lambda x: dictionary[x])
