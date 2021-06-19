@@ -98,7 +98,8 @@ class Ensemble_FFNN_ALL:
     
     def scaling(self, df, TRAIN):
         scaling_columns = ['creator_following_count', 'creator_follower_count', 'engager_follower_count', 
-                           'engager_following_count', 'dt_dow', 'dt_hour', 'len_domains', 'creator_main_language', 'engager_main_language',
+                           'engager_following_count', 'dt_dow', 'dt_hour', 'len_domains', 'creator_main_language', 
+                           'engager_main_language',
                            'engager_feature_number_of_previous_like_engagement',
                            'engager_feature_number_of_previous_reply_engagement',
                            'engager_feature_number_of_previous_retweet_engagement',
@@ -112,7 +113,12 @@ class Ensemble_FFNN_ALL:
                            'len_text_tokens',
                            'len_text_tokens_unique',
                            'cnt_mention',
-                            'number_of_tweet_engagements']
+                           'number_of_tweet_engagements',
+                           'number_of_tweet_like',
+                           'number_of_tweet_reply',
+                           'number_of_tweet_retweet',
+                           'number_of_tweet_comment',
+                           ]
         
         df = df.reset_index(drop=True)
 
