@@ -16,6 +16,7 @@ class Dataiter(Dataset):
         self.train = train
         self.default_values = conf.default_values
 
+
     def __iter__(self):
         return self         
  
