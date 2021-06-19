@@ -25,9 +25,10 @@ from utils.dataset import *
 import core.config as conf
 
 class Ensemble_FFNN_ALL:
-    def __init__(self, df):
+    def __init__(self, df, TARGET_id):
         super().__init__()
         self.df = df
+        self.TARGET_id = TARGET_id
         self.TARGETS = ['reply', 'retweet', 'comment', 'like']
         self.LR = [0.05,0.03,0.07,0.01]
         self.default_values = {'engager_feature_number_of_previous_like_engagement': 16.68406226808318,
@@ -123,13 +124,54 @@ class Ensemble_FFNN_ALL:
         df = df.fillna(df.mean())
         return df
     
-    def train(self):
-        for i in range(5):
-            print(f'------ train ensemble model {i} ------')
-            self._train(i)
+#     def train(self):
+#         for i in range(5):
+#             print(f'------ train ensemble model {i} ------')
+#             self._train(i)
         
     
-    def _train(self, ensemble_num=0):
+    def train(self, ensemble_num=0):
+        
+
+        for i, train in tqdm(enumerate(self.df)):
+            for j in range(5):
+                print(f'------ train ensemble model {i} ------')
+                self._train(train, i, j)
+
+#             train = self.fill_with_default_value(train, ensemble_num)
+#             RMV = self.feature_extract(train)
+#             yt_train = train[self.TARGETS]
+#             Xt_train = train.drop(RMV, axis=1)
+#             del train
+            
+#             Xt_train = self.scaling(Xt_train, True)
+            
+            
+#             gc.collect()
+            
+#             for target in self.TARGETS :
+#                 print(target, self.TARGETS)
+#                 idx = conf.target_to_idx[target]
+#                 X_train = Xt_train.drop(conf.drop_features[idx], axis = 1)
+#                 y_train = yt_train[target]
+#                 model = models[idx]
+#                 model.fit(x = X_train,
+#                           y = y_train,
+#                           epochs = 1,
+#                           batch_size=32) 
+
+#                 #save model
+#                 model_path = f'{conf.model_path}/ensemble-{ensemble_num}/ffnn--{target}-{i}'
+#                 model.save(model_path)
+                
+#                 del X_train
+#                 del y_train
+#             del Xt_train
+#             del yt_train
+
+#             gc.collect()  
+
+    def _train(self, train, i, ensemble_num):
         input_dim = 30 #17
 
         models = [Sequential([
@@ -141,57 +183,46 @@ class Ensemble_FFNN_ALL:
         
         for model in models :
             model.compile(optimizer = 'adam',
-                          loss = 'binary_crossentropy', # softmax : sparse_categorical_crossentropy, sigmoid : binary_crossentropy
-                          metrics=['binary_crossentropy']) # sigmoid :binary_crossentropy
+                          loss = 'binary_crossentropy', 
+                          metrics=['binary_crossentropy']) 
+            
+        train = self.fill_with_default_value(train, ensemble_num)
+        RMV = self.feature_extract(train)
+        yt_train = train[self.TARGETS]
+        Xt_train = train.drop(RMV, axis=1)
+        del train
 
-        for i, train in tqdm(enumerate(self.df)):
-            train = self.fill_with_default_value(train, ensemble_num)
-            RMV = self.feature_extract(train)
-            yt_train = train[self.TARGETS]
-            Xt_train = train.drop(RMV, axis=1)
-            del train
-            
-            Xt_train = self.scaling(Xt_train, True)
-            
-            
-            gc.collect()
-            
-            for target in self.TARGETS :
-                print(target, self.TARGETS)
-                idx = conf.target_to_idx[target]
-                X_train = Xt_train.drop(conf.drop_features[idx], axis = 1)
-                y_train = yt_train[target]
-                model = models[idx]
-                model.fit(x = X_train,
-                          y = y_train,
-                          epochs = 1,
-                          batch_size=32) 
+        Xt_train = self.scaling(Xt_train, True)
 
-                #save model
-                model_path = f'{conf.model_path}/ensemble-{ensemble_num}/ffnn--{target}-{i}'
-                model.save(model_path)
-                
-                del X_train
-                del y_train
-            del Xt_train
-            del yt_train
 
-            gc.collect()  
-            
-    def predict(self, model_path):
-        result = []
-        for i in range(5):
-            print(f'------ predict ensemble model {i} ------')
-            pred = self._predict(model_path, i)
-            result.append(pred)
-        
-        result = np.mean(result, axis=0)
-        
-        return result
+        gc.collect()
+
+        for target in self.TARGETS :
+            print(target, self.TARGETS)
+            idx = conf.target_to_idx[target]
+            X_train = Xt_train.drop(conf.drop_features[idx], axis = 1)
+            y_train = yt_train[target]
+            model = models[idx]
+            model.fit(x = X_train,
+                      y = y_train,
+                      epochs = 1,
+                      batch_size=32) 
+
+            #save model
+            model_path = f'{conf.model_path}/ensemble-{ensemble_num}/ffnn--{target}-{i}'
+            model.save(model_path)
+
+            del X_train
+            del y_train
+        del Xt_train
+        del yt_train
+
+        gc.collect()  
+
             
 
-    def _predict(self, model_path, ensemble_num=0):
-        TARGET = self.TARGETS
+    def predict(self, model_path, model_num=0):
+        TARGET = self.TARGETS[self.TARGET_id]
         valid = self.df
         
         RMV = self.feature_extract(valid)
@@ -203,11 +234,16 @@ class Ensemble_FFNN_ALL:
         X_valid = X_valid.drop(conf.drop_features[self.TARGET_id], axis = 1)
         
         gc.collect()
-                             
-        model = tf.keras.models.load_model(f'{conf.model_path}/ensemble-{ensemble_num}/ffnn--{TARGET}-0')
-        print(X_valid.shape)
-
-        pred = model.predict(X_valid)
         
-        return pred
+        result = []
+        for i in range(5):
+            print(f'------ predict ensemble model {i} ------')
+                             
+            model = tf.keras.models.load_model(f'{conf.model_path}/ensemble-{i}/ffnn--{TARGET}-{model_num}')
+            pred = model.predict(X_valid)
+            result.append(pred)
+            
+        result = np.mean(result, axis=0)
+        
+        return result
         

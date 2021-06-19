@@ -15,6 +15,7 @@ class Dataset:
         self.all_features_to_idx = dict(zip(conf.raw_features, range(len(conf.raw_features))))
         self.train = train
         self.target_encoding = target_encoding
+        self.default_values = conf.default_values
 
     def preprocess(self, df, TARGET_id=conf.LIKE):
         # target = conf.target[TARGET_id]
