@@ -130,7 +130,7 @@ class Dataset:
     
     def cal_valid_pickle(self, df) :
         ## main language
-        lang_dict_path = conf.dict_path + 'language_dict.pkl'
+        lang_dict_path = conf.pickle_data + 'language_dict.pkl'
         pred_pickle_path = conf.pred_pickle_path + "user_main_language.pkl"
 
         user_language = defaultdict(list)
@@ -152,7 +152,7 @@ class Dataset:
     
     def user_engagements(self, df, train=True):
                 
-        pickle_path = conf.dict_path
+        pickle_path = conf.pickle_data
         pred_pickle_path = conf.pred_pickle_path
 
         '''
@@ -164,7 +164,7 @@ class Dataset:
         if os.path.exists(language_dict_path ) :
             with open(language_dict_path , 'rb') as f :
                 language_dict = pickle.load(f)
-                language_dict = defaultdict(int, language_dict)
+                language_dict = defaultdict(lambda :66, language_dict)
         
         df['language'] = df.apply(lambda x : language_dict[x['language']], axis = 1)
         
@@ -189,7 +189,7 @@ class Dataset:
                     user_main_language[user] = pred_main_language[user]
             del pred_main_language
 
-        user_main_language = defaultdict(lambda : -1, user_main_language)
+        user_main_language = defaultdict(lambda : 66, user_main_language)
 
         df['creator_main_language'] = df['creator_id'].map(user_main_language)
         df['engager_main_language'] = df['engager_id'].map(user_main_language)
@@ -208,12 +208,10 @@ class Dataset:
         '''
 
         engagement_like_path = pickle_path + "engager-engagement-like.pkl"
-        print('ppp', engagement_like_path)
         if os.path.exists(engagement_like_path ) :
             with open(engagement_like_path , 'rb') as f :
                 engagement_like = pickle.load(f)
-                engagement_like = defaultdict(int, engagement_like)
-                print('test111')
+                engagement_like = defaultdict(lambda : self.default_values['engager_feature_number_of_previous_like_engagement'], engagement_like)
 
         df['engager_feature_number_of_previous_like_engagement'] = df.apply(lambda x : engagement_like[x['engager_id']], axis = 1)
         del engagement_like
@@ -222,7 +220,7 @@ class Dataset:
         if os.path.exists(engagement_reply_path ) :
             with open(engagement_reply_path , 'rb') as f :
                 engagement_reply = pickle.load(f)
-                engagement_reply = defaultdict(int, engagement_reply)
+                engagement_reply = defaultdict(lambda : self.default_values['engager_feature_number_of_previous_reply_engagement'], engagement_reply)
 
 
         df['engager_feature_number_of_previous_reply_engagement'] = df.apply(lambda x : engagement_reply[x['engager_id']], axis = 1)
@@ -232,7 +230,7 @@ class Dataset:
         if os.path.exists(engagement_retweet_path ) :
             with open(engagement_retweet_path , 'rb') as f :
                 engagement_retweet = pickle.load(f)
-                engagement_retweet = defaultdict(int, engagement_retweet)
+                engagement_retweet = defaultdict(lambda : self.default_values['engager_feature_number_of_previous_retweet_engagement'], engagement_retweet)
 
 
         df['engager_feature_number_of_previous_retweet_engagement'] = df.apply(lambda x : engagement_retweet[x['engager_id']], axis = 1)
@@ -242,7 +240,7 @@ class Dataset:
         if os.path.exists(engagement_comment_path ) :
             with open(engagement_comment_path , 'rb') as f :
                 engagement_comment = pickle.load(f)
-                engagement_comment = defaultdict(int, engagement_comment)
+                engagement_comment = defaultdict(lambda : self.default_values['engager_feature_number_of_previous_comment_engagement'], engagement_comment)
 
 
         df['engager_feature_number_of_previous_comment_engagement'] = df.apply(lambda x : engagement_comment[x['engager_id']], axis = 1)
@@ -269,7 +267,6 @@ class Dataset:
         df['number_of_engagements_ratio_retweet'] = df.apply(lambda x :  x['engager_feature_number_of_previous_retweet_engagement'] / x['number_of_engagements_positive'] if x['number_of_engagements_positive'] != 0 else 0, axis = 1)
         df['number_of_engagements_ratio_comment'] = df.apply(lambda x : x['engager_feature_number_of_previous_comment_engagement'] / x['number_of_engagements_positive'] if x['number_of_engagements_positive'] != 0 else 0, axis = 1)
 
-        print('creator mapping')
 
         '''
         ############ creator mapping ############
@@ -279,7 +276,7 @@ class Dataset:
         if os.path.exists(engagement_like_path ) :
             with open(engagement_like_path , 'rb') as f :
                 engagement_like = pickle.load(f)
-                engagement_like = defaultdict(int, engagement_like)
+                engagement_like = defaultdict(lambda : self.default_values['creator_feature_number_of_previous_like_engagement'], engagement_like)
 
         df['creator_feature_number_of_previous_like_engagement'] = df.apply(lambda x : engagement_like[x['creator_id']], axis = 1)
         del engagement_like
@@ -288,7 +285,7 @@ class Dataset:
         if os.path.exists(engagement_reply_path ) :
             with open(engagement_reply_path , 'rb') as f :
                 engagement_reply = pickle.load(f)
-                engagement_reply = defaultdict(int, engagement_reply)
+                engagement_reply = defaultdict(lambda : self.default_values['creator_feature_number_of_previous_reply_engagement'], engagement_reply)
 
 
         df['creator_feature_number_of_previous_reply_engagement'] = df.apply(lambda x : engagement_reply[x['creator_id']], axis = 1)
@@ -298,7 +295,7 @@ class Dataset:
         if os.path.exists(engagement_retweet_path ) :
             with open(engagement_retweet_path , 'rb') as f :
                 engagement_retweet = pickle.load(f)
-                engagement_retweet = defaultdict(int, engagement_retweet)
+                engagement_retweet = defaultdict(lambda : self.default_values['creator_feature_number_of_previous_retweet_engagement'], engagement_retweet)
 
 
         df['creator_feature_number_of_previous_retweet_engagement'] = df.apply(lambda x : engagement_retweet[x['creator_id']], axis = 1)
@@ -308,7 +305,7 @@ class Dataset:
         if os.path.exists(engagement_comment_path ) :
             with open(engagement_comment_path , 'rb') as f :
                 engagement_comment = pickle.load(f)
-                engagement_comment = defaultdict(int, engagement_comment)
+                engagement_comment = defaultdict(lambda : self.default_values['creator_feature_number_of_previous_comment_engagement'], engagement_comment)
 
 
         df['creator_feature_number_of_previous_comment_engagement'] = df.apply(lambda x : engagement_comment[x['creator_id']], axis = 1)
@@ -337,8 +334,8 @@ class Dataset:
 
         return df
 
-    def tweet_engagements( df):
-        pickle_path = conf.dict_path
+    def tweet_engagements(self, df):
+        pickle_path = conf.pickle_data
 
         # all engagement
         ### 1 ###
@@ -396,7 +393,7 @@ class Dataset:
         del df1, df2, df3
         df = df.reset_index(drop=True)
 
-        # like_info
+        # creator engagements
         engagements_path_list = ["creator_avg_like.pkl", "creator_avg_retweet.pkl", "creator_avg_reply.pkl", "creator_avg_comment.pkl"]
         feature_list = ['number_of_tweet_like', 'number_of_tweet_retweet', 'number_of_tweet_reply', 'number_of_tweet_comment']
 
@@ -420,6 +417,20 @@ class Dataset:
         df['cnt_mention'] = df['text_tokens'].apply(lambda x: (x.split('\t').count('137')))
         df = df.drop('text_tokens', axis=1)
         return df
+    
+    
+#     def fill_with_default_value(self, df):
+                
+#         default_values = self.default_values
+        
+#         tmp = df.sample(frac=0.1, random_state=self.random_state)
+        
+#         for key in default_values.keys():
+#             tmp[key] = default_values[key]
+            
+#         df.loc[tmp.index] = tmp.loc[tmp.index]
+        
+#         return df
 
 
 

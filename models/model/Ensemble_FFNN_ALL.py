@@ -24,18 +24,50 @@ from utils.dataset import *
 
 import core.config as conf
 
-class FFNN_ALL:
-    def __init__(self, df, TARGET_id):
+class Ensemble_FFNN_ALL:
+    def __init__(self, df):
         super().__init__()
         self.df = df
-        self.TARGET_id = TARGET_id
-#         if TARGET_id != 4 :
-#             self.TARGETS = ['reply', 'retweet', 'comment', 'like'][self.TARGET_id]
-#             self.LR = [0.05,0.03,0.07,0.01][self.TARGET_id]
-#         else :
         self.TARGETS = ['reply', 'retweet', 'comment', 'like']
         self.LR = [0.05,0.03,0.07,0.01]
+        self.default_values = {'engager_feature_number_of_previous_like_engagement': 16.68406226808318,
+                             'engager_feature_number_of_previous_reply_engagement': 3.9166628750988446,
+                             'engager_feature_number_of_previous_retweet_engagement': 7.943690435417255,
+                             'engager_feature_number_of_previous_comment_engagement': 2.397117827194066,
+                             'creator_feature_number_of_previous_like_engagement': 18.650278982078916,
+                             'creator_feature_number_of_previous_reply_engagement': 4.005221886495085,
+                             'creator_feature_number_of_previous_retweet_engagement': 8.378531979240039,
+                             'creator_feature_number_of_previous_comment_engagement': 2.465194979899623,
+                             'creator_number_of_engagements_positive': 8.374806956928415,
+                             'number_of_engagements_positive': 7.735383351448337,
+                             'number_of_engagements_ratio_like': 2.1568500887495556,
+                             'number_of_engagements_ratio_retweet': 1.0269291222560957,
+                             'number_of_engagements_ratio_reply': 0.5063308044539909,
+                             'number_of_engagements_ratio_comment': 0.30988998454035777,
+                             'creator_number_of_engagements_ratio_like': 2.226950313959139,
+                             'creator_number_of_engagements_ratio_retweet': 1.0004447890358288,
+                             'creator_number_of_engagements_ratio_reply': 0.4782464726761964,
+                             'creator_number_of_engagements_ratio_comment': 0.29435842432883613,
+                             'creator_main_language': 0,
+                             'engager_main_language': 0,
+                             'is_tweet_in_creator_main_language': 0.5,
+                             'is_tweet_in_engager_main_language': 0.5,
+                             'creator_and_engager_have_same_main_language': 0.5}
+        
                        
+    def fill_with_default_value(self, df, ensemble_num=0):
+                
+        default_values = self.default_values
+        
+        tmp = df.sample(frac=0.1, random_state=conf.random_states[ensemble_num])
+        
+        for key in default_values.keys():
+            tmp[key] = default_values[key]
+            
+        df.loc[tmp.index] = tmp.loc[tmp.index]
+        
+        return df
+
 
     def feature_extract(self, train=True):
         label_names = ['reply', 'retweet', 'comment', 'like']
@@ -92,6 +124,12 @@ class FFNN_ALL:
         return df
     
     def train(self):
+        for i in range(5):
+            print(f'------ train ensemble model {i} ------')
+            self._train(i)
+        
+    
+    def _train(self, ensemble_num=0):
         input_dim = 30 #17
 
         models = [Sequential([
@@ -107,6 +145,7 @@ class FFNN_ALL:
                           metrics=['binary_crossentropy']) # sigmoid :binary_crossentropy
 
         for i, train in tqdm(enumerate(self.df)):
+            train = self.fill_with_default_value(train, ensemble_num)
             RMV = self.feature_extract(train)
             yt_train = train[self.TARGETS]
             Xt_train = train.drop(RMV, axis=1)
@@ -129,7 +168,7 @@ class FFNN_ALL:
                           batch_size=32) 
 
                 #save model
-                model_path = f'{conf.model_path}/ffnn--{target}-{i}'
+                model_path = f'{conf.model_path}/ensemble-{ensemble_num}/ffnn--{target}-{i}'
                 model.save(model_path)
                 
                 del X_train
@@ -138,8 +177,20 @@ class FFNN_ALL:
             del yt_train
 
             gc.collect()  
-
+            
     def predict(self, model_path):
+        result = []
+        for i in range(5):
+            print(f'------ predict ensemble model {i} ------')
+            pred = self._predict(model_path, i)
+            result.append(pred)
+        
+        result = np.mean(result, axis=0)
+        
+        return result
+            
+
+    def _predict(self, model_path, ensemble_num=0):
         TARGET = self.TARGETS
         valid = self.df
         
@@ -153,7 +204,7 @@ class FFNN_ALL:
         
         gc.collect()
                              
-        model = tf.keras.models.load_model(f'{conf.model_path}/ffnn--{TARGET}-0')
+        model = tf.keras.models.load_model(f'{conf.model_path}/ensemble-{ensemble_num}/ffnn--{TARGET}-0')
         print(X_valid.shape)
 
         pred = model.predict(X_valid)

@@ -3,7 +3,10 @@ gpu = False
 
 # network structure
 # structures = ['xgboost', 'deepfm', 'dnn', 'ffnn']
-net_structure = 'ffnn_all'
+net_structure = 'ensemble_ffnn_all' # ffnn_all
+
+
+random_states = [1111, 2222, 3333, 4444, 5555]
 
 # path
 data_root = '/dataset/'
@@ -13,13 +16,15 @@ submission_path = project_root + 'submission/'
 preproc_path = '/hdd/preprocessing/'
 raw_lzo_path = '/hdd/twitter/raw_lzo/'
 dataset_mini_path = '/hdd/twitter/dataset_mini/'
-dict_path = '/dataset/pickle/'
 pickle_data = '/dataset/valid_pickle/'
 scaler_path = '/dataset/preprocessing/'
-dataset_path = '/dataset/final_data'
-cross_valid_data = '/dataset/final_data/cross-valid-data/part-1/train/'
+dataset_path = '/dataset/final_data/dataset/train/'
+# dataset_path = '/dataset/final_data/small_dataset/'
 cross_valid_data = '/dataset/final_data/dataset/train_split/'
 pred_pickle_path = '/dataset/pred_pickle/'
+model_path = f'/hdd/models/ensemble_ffnn_pkl/'
+small_dataset_path = '/dataset/final_data/small_dataset/'
+
 
 # features
 raw_features = ["text_tokens", "hashtags", "tweet_id", "media", "links", "domains", "tweet_type","language", "tweet_timestamp", "creator_id", "creator_follower_count", "creator_following_count", "creator_is_verified", "creator_account_creation","engager_id", "engager_follower_count", "engager_following_count", "engager_is_verified", "engager_account_creation", "creator_follows_engager"]
