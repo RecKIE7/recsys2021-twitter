@@ -36,7 +36,13 @@ class Dataiter(Dataset):
                              'engager_main_language': 0,
                              'is_tweet_in_creator_main_language': 0.5,
                              'is_tweet_in_engager_main_language': 0.5,
-                             'creator_and_engager_have_same_main_language': 0.5}
+                             'creator_and_engager_have_same_main_language': 0.5,
+                             'number_of_tweet_like': 1.2568421511772854,
+                             'number_of_tweet_reply': 1.0636431744005945,
+                             'number_of_tweet_retweet': 1.0998849163606805,
+                             'number_of_tweet_comment': 1.0363500723064045,
+                             'number_of_tweet_engagements': 1.3275094196173265
+                              }
 
     def __iter__(self):
         return self         
