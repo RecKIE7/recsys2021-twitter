@@ -11,14 +11,21 @@ from models.model.DNN import DNN
 # from models.model.DeepFM import DeepFM
 from models.model.FFNN import FFNN
 from models.model.FFNN_ALL import FFNN_ALL
+from models.model.Ensemble_FFNN_ALL import Ensemble_FFNN_ALL
+
 from models.network import Network
 
 class Train(object):
-    def __init__(self, target='like'):
+    def __init__(self, target='all'):
+
         TARGET_id = conf.target_to_idx[target]
-        self.df = Dataiter(conf.dataset_path, TARGET_id, train=True) 
-        
-        if conf.net_structure == 'xgboost':
+        self.df = Dataiter(conf.small_dataset_path, TARGET_id, train=True) # dataset_path
+            
+            
+        if conf.net_structure == 'ensemble_ffnn_all':
+            model = Ensemble_FFNN_ALL(self.df)
+            
+        elif conf.net_structure == 'xgboost':
             model = XGBoost(self.df, TARGET_id)
 
         elif conf.net_structure == 'deepfm':                

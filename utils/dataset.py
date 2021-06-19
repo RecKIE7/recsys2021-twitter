@@ -15,37 +15,6 @@ class Dataset:
         self.all_features_to_idx = dict(zip(conf.raw_features, range(len(conf.raw_features))))
         self.train = train
         self.target_encoding = target_encoding
-        
-#         # defult value dict (나중에 피클로 불러오기)
-#         pickle_path = conf.pickle_data
-#         default_values_path = pickle_path + "default_value.pkl"
-#         if os.path.exists(default_values_path) :
-#             with open(default_values_path , 'rb') as f :
-#                 self.default_values = pickle.load(f)
-#         self.default_values = {'engager_feature_number_of_previous_like_engagement': 16.68406226808318,
-#                              'engager_feature_number_of_previous_reply_engagement': 3.9166628750988446,
-#                              'engager_feature_number_of_previous_retweet_engagement': 7.943690435417255,
-#                              'engager_feature_number_of_previous_comment_engagement': 2.397117827194066,
-#                              'creator_feature_number_of_previous_like_engagement': 18.650278982078916,
-#                              'creator_feature_number_of_previous_reply_engagement': 4.005221886495085,
-#                              'creator_feature_number_of_previous_retweet_engagement': 8.378531979240039,
-#                              'creator_feature_number_of_previous_comment_engagement': 2.465194979899623,
-#                              'creator_number_of_engagements_positive': 8.374806956928415,
-#                              'number_of_engagements_positive': 7.735383351448337,
-#                              'number_of_engagements_ratio_like': 2.1568500887495556,
-#                              'number_of_engagements_ratio_retweet': 1.0269291222560957,
-#                              'number_of_engagements_ratio_reply': 0.5063308044539909,
-#                              'number_of_engagements_ratio_comment': 0.30988998454035777,
-#                              'creator_number_of_engagements_ratio_like': 2.226950313959139,
-#                              'creator_number_of_engagements_ratio_retweet': 1.0004447890358288,
-#                              'creator_number_of_engagements_ratio_reply': 0.4782464726761964,
-#                              'creator_number_of_engagements_ratio_comment': 0.29435842432883613,
-#                              'creator_main_language': 0,
-#                              'engager_main_language': 0,
-#                              'is_tweet_in_creator_main_language': 0.5,
-#                              'is_tweet_in_engager_main_language': 0.5,
-#                              'creator_and_engager_have_same_main_language': 0.5}
-
 
     def preprocess(self, df, TARGET_id=conf.LIKE):
         # target = conf.target[TARGET_id]
@@ -420,18 +389,18 @@ class Dataset:
         return df
     
     
-    def fill_with_default_value(self, df):
+#     def fill_with_default_value(self, df):
                 
-        default_values = self.default_values
+#         default_values = self.default_values
         
-        tmp = df.sample(frac=0.1, random_state=conf.random_state)
+#         tmp = df.sample(frac=0.1, random_state=self.random_state)
         
-        for key in default_values.keys():
-            tmp[key] = default_values[key]
+#         for key in default_values.keys():
+#             tmp[key] = default_values[key]
             
-        df.loc[tmp.index] = tmp.loc[tmp.index]
+#         df.loc[tmp.index] = tmp.loc[tmp.index]
         
-        return df
+#         return df
 
 
 

@@ -3,12 +3,10 @@ gpu = False
 
 # network structure
 # structures = ['xgboost', 'deepfm', 'dnn', 'ffnn']
-net_structure = 'ffnn_all'
+net_structure = 'ensemble_ffnn_all' # ffnn_all
 
-ensemble_num = 0
 
 random_states = [1111, 2222, 3333, 4444, 5555]
-random_state = random_states[ensemble_num]
 
 # path
 data_root = '/dataset/'
@@ -24,7 +22,7 @@ dataset_path = '/dataset/final_data/dataset/train/'
 # dataset_path = '/dataset/final_data/small_dataset/'
 cross_valid_data = '/dataset/final_data/dataset/train_split/'
 pred_pickle_path = '/dataset/pred_pickle/'
-model_path = f'/hdd/models/ffnn_pkl_{ensemble_num}/'
+model_path = f'/hdd/models/ensemble_ffnn_pkl/'
 small_dataset_path = '/dataset/final_data/small_dataset/'
 
 
