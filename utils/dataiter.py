@@ -12,6 +12,7 @@ class Dataiter(Dataset):
         self.current = 0
         self.stop = len(self.file_list)
         self.TARGET_id = TARGET_id 
+        self.random_state = conf.random_states[TARGET_id]
         self.train = train
         self.default_values = {'engager_feature_number_of_previous_like_engagement': 16.68406226808318,
                              'engager_feature_number_of_previous_reply_engagement': 3.9166628750988446,
@@ -56,7 +57,7 @@ class Dataiter(Dataset):
             df = self.user_engagements(df, self.train) # user engagement
             df = self.tweet_features(df) # tweet features
             
-            df = self.fill_with_default_value(df) # for ensemble
+#             df = self.fill_with_default_value(df) # for ensemble
             
             self.current_file = current_file
 
