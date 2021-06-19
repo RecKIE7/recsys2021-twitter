@@ -337,9 +337,10 @@ class Dataset:
 
         return df
 
-    def tweet_engagements(self, df):
+    def tweet_engagements( df):
         pickle_path = conf.dict_path
 
+        # all engagement
         ### 1 ###
         tweet_engagement_path = pickle_path + "tweet_id_engagement_1.pkl"
 
@@ -347,7 +348,7 @@ class Dataset:
             with open(tweet_engagement_path, 'rb') as f :
                 tweet_engagements = pickle.load(f)
                 tweet_engagements = defaultdict(lambda : -1, tweet_engagements)
-        
+
         df['number_of_tweet_engagements'] = df.apply(lambda x : tweet_engagements[x['tweet_id']], axis = 1)
 
         df1 = df[df['number_of_tweet_engagements'] != -1]
@@ -376,9 +377,38 @@ class Dataset:
 
         df['number_of_tweet_engagements'] = df.apply(lambda x : tweet_engagements[x['tweet_id']], axis = 1)
 
-        df = pd.concat([df1, df2, df])
-        del df1, df2
+        df3 = df[df['number_of_tweet_engagements'] != -1]
+        df = df[df['number_of_tweet_engagements'] == -1]
+
+        ### 4 : from creator ###
+        tweet_engagement_path = pickle_path + "creator_avg_all.pkl"
+
+        if os.path.exists(tweet_engagement_path ) :
+            with open(tweet_engagement_path, 'rb') as f :
+                tweet_engagements = pickle.load(f)
+                tweet_engagements = defaultdict(lambda : self.default_values['number_of_tweet_engagements'], tweet_engagements)
+
+
+        df['number_of_tweet_engagements'] = df.apply(lambda x : tweet_engagements[x['creator_id']], axis = 1)
+
+
+        df = pd.concat([df1, df2, df3, df])
+        del df1, df2, df3
         df = df.reset_index(drop=True)
+
+        # like_info
+        engagements_path_list = ["creator_avg_like.pkl", "creator_avg_retweet.pkl", "creator_avg_reply.pkl", "creator_avg_comment.pkl"]
+        feature_list = ['number_of_tweet_like', 'number_of_tweet_retweet', 'number_of_tweet_reply', 'number_of_tweet_comment']
+
+        for i in range(4) :
+            tweet_engagement_path = pickle_path + engagements_path_list[i]
+
+            if os.path.exists(tweet_engagement_path ) :
+                with open(tweet_engagement_path, 'rb') as f :
+                    tweet_engagements = pickle.load(f)
+                    tweet_engagements = defaultdict(lambda : self.default_values[feature_list[i]], tweet_engagements)
+
+            df[feature_list[i]] = df.apply(lambda x : tweet_engagements[x['creator_id']], axis = 1)
 
         return df
 
@@ -390,6 +420,7 @@ class Dataset:
         df['cnt_mention'] = df['text_tokens'].apply(lambda x: (x.split('\t').count('137')))
         df = df.drop('text_tokens', axis=1)
         return df
+
 
 
 
