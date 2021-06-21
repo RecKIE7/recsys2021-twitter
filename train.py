@@ -22,6 +22,7 @@ class Train(object):
         TARGET_id = conf.target_to_idx[target]
         self.df = Dataiter(conf.raw_lzo_path, TARGET_id, train=True) # dataset_path, small_dataset_path
 
+            
         if conf.net_structure == 'ensemble_ffnn_all':
             model = Ensemble_FFNN_ALL(self.df, TARGET_id)
             
@@ -33,12 +34,16 @@ class Train(object):
             
         elif conf.net_structure == 'dnn' :
             model = DNN(self.df, TARGET_id)
+            
         elif conf.net_structure == 'ffnn' :
             model = FFNN(self.df, TARGET_id)
+            
         elif conf.net_structure == 'ffnn_all':
             model = FFNN_ALL(self.df, TARGET_id)
+        
         elif conf.net_structure == 'ffnn_all_default':
             model = FFNN_ALL_DEFAULT(self.df, TARGET_id)
+        
         else:
             print('Unidentified Network... exit')
             exit()

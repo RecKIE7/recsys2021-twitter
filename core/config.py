@@ -113,6 +113,36 @@ default_values = {'engager_feature_number_of_previous_like_engagement': 16.68406
                              'number_of_tweet_comment': 1.0363500723064045,
                              'number_of_tweet_engagements': 1.3275094196173265}
 
+
+# default_values = {'engager_feature_number_of_previous_like_engagement': 0,
+#                              'engager_feature_number_of_previous_reply_engagement': 0,
+#                              'engager_feature_number_of_previous_retweet_engagement': 0,
+#                              'engager_feature_number_of_previous_comment_engagement':0,
+#                              'creator_feature_number_of_previous_like_engagement': 0,
+#                              'creator_feature_number_of_previous_reply_engagement': 0,
+#                              'creator_feature_number_of_previous_retweet_engagement': 0,
+#                              'creator_feature_number_of_previous_comment_engagement': 0,
+#                              'creator_number_of_engagements_positive': 0,
+#                              'number_of_engagements_positive': 0,
+#                              'number_of_engagements_ratio_like': 0,
+#                              'number_of_engagements_ratio_retweet': 0,
+#                              'number_of_engagements_ratio_reply': 0,
+#                              'number_of_engagements_ratio_comment': 0,
+#                              'creator_number_of_engagements_ratio_like': 0,
+#                              'creator_number_of_engagements_ratio_retweet': 0,
+#                              'creator_number_of_engagements_ratio_reply': 0,
+#                              'creator_number_of_engagements_ratio_comment': 0,
+#                              'creator_main_language': 0,
+#                              'engager_main_language': 0,
+#                              'is_tweet_in_creator_main_language': 0.5,
+#                              'is_tweet_in_engager_main_language': 0.5,
+#                              'creator_and_engager_have_same_main_language': 0.5,
+#                              'number_of_tweet_like': 0,
+#                              'number_of_tweet_reply': 0,
+#                              'number_of_tweet_retweet': 0,
+#                              'number_of_tweet_comment': 0,
+#                              'number_of_tweet_engagements': 0}
+
 # for Deep FM
 if net_structure == 'deepfm':
     sparse_features = ['media', 'tweet_type', 'creator_is_verified', 'engager_is_verified', 'creator_follows_engager']

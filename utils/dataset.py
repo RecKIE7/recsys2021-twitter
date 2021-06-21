@@ -447,22 +447,6 @@ class Dataset:
         return df
     
     
-#     def fill_with_default_value(self, df):
-                
-#         default_values = self.default_values
-        
-#         tmp = df.sample(frac=0.1, random_state=self.random_state)
-        
-#         for key in default_values.keys():
-#             tmp[key] = default_values[key]
-            
-#         df.loc[tmp.index] = tmp.loc[tmp.index]
-        
-#         return df
-
-
-
-
 
 
 
