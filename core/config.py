@@ -3,7 +3,7 @@ gpu = False
 
 # network structure
 # structures = ['xgboost', 'deepfm', 'dnn', 'ffnn']
-net_structure = 'ensemble_ffnn_all' # ffnn_all
+net_structure = 'ffnn_all_default' # ffnn_all
 
 
 random_states = [1111, 2222, 3333, 4444, 5555]
@@ -19,12 +19,12 @@ dataset_mini_path = '/hdd/twitter/dataset_mini/'
 pickle_data = '/dataset/valid_pickle/'
 scaler_path = '/dataset/preprocessing/'
 
-dataset_path = '/dataset/final_data/dataset/train/'
+dataset_path = '/dataset/final_data/dataset/train_split/'
 valid_dataset_path = '/dataset/final_data/dataset/valid/'
 
 cross_valid_data = '/dataset/final_data/dataset/train_split/'
 pred_pickle_path = '/dataset/pred_pickle/'
-model_path = f'/hdd/models/ensemble_ffnn_pkl/'
+model_path = f'/hdd/models/ffnn_default/'
 small_dataset_path = '/dataset/final_data/small_dataset/'
 
 
@@ -35,21 +35,54 @@ labels = ["reply_timestamp", "retweet_timestamp", "comment_timestamp", "like_tim
 # used raw features
 used_features = ['text_tokens', 'creator_id', 'engager_id', 'tweet_id', 'tweet_type', 'language', "hashtags", "creator_account_creation", 'creator_follower_count', 'creator_following_count', 'engager_follower_count', 'engager_following_count', 'domains', 'media', 'tweet_timestamp']
 
-drop_features = [['engager_feature_number_of_previous_like_engagement', 'engager_feature_number_of_previous_retweet_engagement',
-                 'engager_feature_number_of_previous_comment_engagement', 'number_of_engagements_ratio_like', 
-                  'number_of_engagements_ratio_retweet', 'number_of_engagements_ratio_comment'],
-                 
-                 ['engager_feature_number_of_previous_like_engagement', 'engager_feature_number_of_previous_reply_engagement', 
+# 'reply', 'retweet', 'comment', 'like'
+drop_features = [['engager_feature_number_of_previous_like_engagement', 
+                  'engager_feature_number_of_previous_retweet_engagement',
                   'engager_feature_number_of_previous_comment_engagement', 'number_of_engagements_ratio_like', 
-                 'number_of_engagements_ratio_reply', 'number_of_engagements_ratio_comment'],
+                  'number_of_engagements_ratio_retweet', 'number_of_engagements_ratio_comment',
+                  'number_of_tweet_like', 'number_of_tweet_retweet', 'number_of_tweet_comment',
+                  'creator_number_of_engagements_ratio_like', 'creator_number_of_engagements_ratio_retweet',
+                  'creator_number_of_engagements_ratio_comment',
+                  'creator_feature_number_of_previous_like_engagement', 
+                  'creator_feature_number_of_previous_retweet_engagement',
+                  'creator_feature_number_of_previous_comment_engagement'
+                 ],
                  
-                 ['engager_feature_number_of_previous_like_engagement', 'engager_feature_number_of_previous_retweet_engagement', 
+                 ['engager_feature_number_of_previous_like_engagement', 
+                  'engager_feature_number_of_previous_reply_engagement', 
+                  'engager_feature_number_of_previous_comment_engagement', 'number_of_engagements_ratio_like', 
+                  'number_of_engagements_ratio_reply', 'number_of_engagements_ratio_comment',
+                  'number_of_tweet_like', 'number_of_tweet_reply', 'number_of_tweet_comment',
+                  'creator_number_of_engagements_ratio_like', 'creator_number_of_engagements_ratio_reply',
+                  'creator_number_of_engagements_ratio_comment',
+                  'creator_feature_number_of_previous_like_engagement', 
+                  'creator_feature_number_of_previous_reply_engagement',
+                  'creator_feature_number_of_previous_comment_engagement'
+                 ],
+                 
+                 ['engager_feature_number_of_previous_like_engagement',
+                  'engager_feature_number_of_previous_retweet_engagement', 
                   'engager_feature_number_of_previous_reply_engagement', 'number_of_engagements_ratio_like', 
-                 'number_of_engagements_ratio_retweet', 'number_of_engagements_ratio_reply'],
+                  'number_of_engagements_ratio_retweet', 'number_of_engagements_ratio_reply',
+                  'number_of_tweet_like', 'number_of_tweet_retweet', 'number_of_tweet_reply',
+                  'creator_number_of_engagements_ratio_like', 'creator_number_of_engagements_ratio_retweet',
+                  'creator_number_of_engagements_ratio_reply',
+                  'creator_feature_number_of_previous_like_engagement', 
+                  'creator_feature_number_of_previous_retweet_engagement',
+                  'creator_feature_number_of_previous_reply_engagement'
+                 ],
                  
-                 ['engager_feature_number_of_previous_retweet_engagement', 'engager_feature_number_of_previous_reply_engagement', 
+                 ['engager_feature_number_of_previous_retweet_engagement',
+                  'engager_feature_number_of_previous_reply_engagement', 
                   'engager_feature_number_of_previous_comment_engagement', 'number_of_engagements_ratio_retweet', 
-                 'number_of_engagements_ratio_reply', 'number_of_engagements_ratio_comment']]
+                  'number_of_engagements_ratio_reply', 'number_of_engagements_ratio_comment',
+                  'number_of_tweet_reply', 'number_of_tweet_retweet', 'number_of_tweet_comment',
+                  'creator_number_of_engagements_ratio_reply', 'creator_number_of_engagements_ratio_retweet',
+                  'creator_number_of_engagements_ratio_comment',
+                  'creator_feature_number_of_previous_reply_engagement', 
+                  'creator_feature_number_of_previous_retweet_engagement',
+                  'creator_feature_number_of_previous_comment_engagement'
+                 ]]
 
 default_values = {'engager_feature_number_of_previous_like_engagement': 16.68406226808318,
                              'engager_feature_number_of_previous_reply_engagement': 3.9166628750988446,

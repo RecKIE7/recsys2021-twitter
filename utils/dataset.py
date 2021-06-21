@@ -190,7 +190,7 @@ class Dataset:
                     user_main_language[user] = pred_main_language[user]
             del pred_main_language
 
-        user_main_language = defaultdict(lambda : 66, user_main_language)
+        user_main_language = defaultdict(lambda : 0, user_main_language)
 
         df['creator_main_language'] = df['creator_id'].map(user_main_language)
         df['engager_main_language'] = df['engager_id'].map(user_main_language)
@@ -340,7 +340,7 @@ class Dataset:
 
         # all engagement
         ### 1 ###
-        tweet_engagement_path = pickle_path + "tweet_id_engagement_1.pkl"
+        tweet_engagement_path = pickle_path + "tweet_id_engagement_new_1.pkl"
 
         if os.path.exists(tweet_engagement_path ) :
             with open(tweet_engagement_path, 'rb') as f :
@@ -353,7 +353,7 @@ class Dataset:
         df = df[df['number_of_tweet_engagements'] == -1]
 
         ### 2 ###
-        tweet_engagement_path = pickle_path + "tweet_id_engagement_2.pkl"
+        tweet_engagement_path = pickle_path + "tweet_id_engagement_new_2.pkl"
 
         if os.path.exists(tweet_engagement_path ) :
             with open(tweet_engagement_path, 'rb') as f :
@@ -366,7 +366,7 @@ class Dataset:
         df = df[df['number_of_tweet_engagements'] == -1]
 
         ### 3 ###
-        tweet_engagement_path = pickle_path + "tweet_id_engagement_3.pkl"
+        tweet_engagement_path = pickle_path + "tweet_id_engagement_new_3.pkl"
 
         if os.path.exists(tweet_engagement_path ) :
             with open(tweet_engagement_path, 'rb') as f :
@@ -377,8 +377,34 @@ class Dataset:
 
         df3 = df[df['number_of_tweet_engagements'] != -1]
         df = df[df['number_of_tweet_engagements'] == -1]
+        
+        ### 4 ###
+        tweet_engagement_path = pickle_path + "tweet_id_engagement_new_4.pkl"
 
-        ### 4 : from creator ###
+        if os.path.exists(tweet_engagement_path ) :
+            with open(tweet_engagement_path, 'rb') as f :
+                tweet_engagements = pickle.load(f)
+                tweet_engagements = defaultdict(lambda : -1, tweet_engagements)
+
+        df['number_of_tweet_engagements'] = df.apply(lambda x : tweet_engagements[x['tweet_id']], axis = 1)
+        
+        df4 = df[df['number_of_tweet_engagements'] != -1]
+        df = df[df['number_of_tweet_engagements'] == -1]
+        
+        ### 5 ###
+        tweet_engagement_path = pickle_path + "tweet_id_engagement_new_5.pkl"
+
+        if os.path.exists(tweet_engagement_path ) :
+            with open(tweet_engagement_path, 'rb') as f :
+                tweet_engagements = pickle.load(f)
+                tweet_engagements = defaultdict(lambda : -1, tweet_engagements)
+
+        df['number_of_tweet_engagements'] = df.apply(lambda x : tweet_engagements[x['tweet_id']], axis = 1)
+        
+        df5 = df[df['number_of_tweet_engagements'] != -1]
+        df = df[df['number_of_tweet_engagements'] == -1]
+
+        ### 6 : from creator ###
         tweet_engagement_path = pickle_path + "creator_avg_all.pkl"
 
         if os.path.exists(tweet_engagement_path ) :
@@ -390,10 +416,10 @@ class Dataset:
         df['number_of_tweet_engagements'] = df.apply(lambda x : tweet_engagements[x['creator_id']], axis = 1)
 
 
-        df = pd.concat([df1, df2, df3, df])
+        df = pd.concat([df1, df2, df3, df4, df5, df])
         del df1, df2, df3
         df = df.reset_index(drop=True)
-
+        
         # creator engagements
         engagements_path_list = ["creator_avg_like.pkl", "creator_avg_retweet.pkl", "creator_avg_reply.pkl", "creator_avg_comment.pkl"]
         feature_list = ['number_of_tweet_like', 'number_of_tweet_retweet', 'number_of_tweet_reply', 'number_of_tweet_comment']
@@ -407,7 +433,8 @@ class Dataset:
                     tweet_engagements = defaultdict(lambda : self.default_values[feature_list[i]], tweet_engagements)
 
             df[feature_list[i]] = df.apply(lambda x : tweet_engagements[x['creator_id']], axis = 1)
-
+            del tweet_engagements
+        
         return df
 
 

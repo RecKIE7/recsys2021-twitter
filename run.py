@@ -3,8 +3,9 @@ import os
 from utils.dataiter import Dataset
 from utils.preprocessing import *
 from models.baseline.random_model import random_prediction_model
-from models.model.Ensemble_FFNN_ALL import Ensemble_FFNN_ALL
-# from models.model.XGBoost import XGBoost
+#from models.model.Ensemble_FFNN_ALL import Ensemble_FFNN_ALL
+#from models.model.XGBoost import XGBoost
+from models.model.FFNN_ALL_DEFAULT import FFNN_ALL_DEFAULT
 from core.config import raw_features
 import core.config as conf
 from tqdm import tqdm
@@ -22,7 +23,7 @@ def parse_input_line(line):
 
 def evaluate_test_set():
     path = './test' # ./test
-    path = '/dataset/final_data/small_dataset/valid_1000'
+    path = '/dataset/final_data/dataset/valid/part-0'
     model_path = conf.model_path
 
     #part_files = sorted([os.path.join(path, f) for f in os.listdir(path) if 'part' in f])
@@ -37,10 +38,10 @@ def evaluate_test_set():
         df = ds.user_engagements(df, train = False) # user engagement
         df = ds.tweet_features(df) # tweet features
         
-        pred_reply = Ensemble_FFNN_ALL(df, conf.REPLY).predict(model_path, model_num=0) 
-        pred_retweet = Ensemble_FFNN_ALL(df, conf.RETWEET).predict(model_path, model_num=0) 
-        pred_comment = Ensemble_FFNN_ALL(df, conf.COMMNET).predict(model_path, model_num=0) 
-        pred_like = Ensemble_FFNN_ALL(df, conf.LIKE).predict(model_path, model_num=0) 
+        pred_reply = FFNN_ALL_DEFAULT(df, conf.REPLY).predict(model_path) #, model_num=0
+        pred_retweet = FFNN_ALL_DEFAULT(df, conf.RETWEET).predict(model_path) 
+        pred_comment = FFNN_ALL_DEFAULT(df, conf.COMMNET).predict(model_path) 
+        pred_like = FFNN_ALL_DEFAULT(df, conf.LIKE).predict(model_path) 
 
         with open(file, 'r') as f:
             for i, line in enumerate(f.readlines()):
