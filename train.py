@@ -11,16 +11,17 @@ from models.model.DNN import DNN
 # from models.model.DeepFM import DeepFM
 from models.model.FFNN import FFNN
 from models.model.FFNN_ALL import FFNN_ALL
+from models.model.FFNN_ALL_DEFAULT import FFNN_ALL_DEFAULT
 from models.model.Ensemble_FFNN_ALL import Ensemble_FFNN_ALL
 
 from models.network import Network
 
 class Train(object):
     def __init__(self, target='all'):
-
+        
         TARGET_id = conf.target_to_idx[target]
-        self.df = Dataiter(conf.dataset_path, TARGET_id, train=True) # dataset_path, small_dataset_path
-            
+        self.df = Dataiter(conf.raw_lzo_path, TARGET_id, train=True) # dataset_path, small_dataset_path
+
             
         if conf.net_structure == 'ensemble_ffnn_all':
             model = Ensemble_FFNN_ALL(self.df, TARGET_id)
@@ -39,7 +40,10 @@ class Train(object):
             
         elif conf.net_structure == 'ffnn_all':
             model = FFNN_ALL(self.df, TARGET_id)
-            
+        
+        elif conf.net_structure == 'ffnn_all_default':
+            model = FFNN_ALL_DEFAULT(self.df, TARGET_id)
+        
         else:
             print('Unidentified Network... exit')
             exit()
