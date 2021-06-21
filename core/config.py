@@ -137,11 +137,11 @@ default_values = {'engager_feature_number_of_previous_like_engagement': 16.68406
 #                              'is_tweet_in_creator_main_language': 0.5,
 #                              'is_tweet_in_engager_main_language': 0.5,
 #                              'creator_and_engager_have_same_main_language': 0.5,
-#                              'number_of_tweet_like': 0,
-#                              'number_of_tweet_reply': 0,
-#                              'number_of_tweet_retweet': 0,
-#                              'number_of_tweet_comment': 0,
-#                              'number_of_tweet_engagements': 0}
+#                              'number_of_tweet_like': -1,
+#                              'number_of_tweet_reply': -1,
+#                              'number_of_tweet_retweet': -1,
+#                              'number_of_tweet_comment': -1,
+#                              'number_of_tweet_engagements': -1}
 
 # for Deep FM
 if net_structure == 'deepfm':
