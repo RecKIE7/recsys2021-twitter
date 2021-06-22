@@ -3,7 +3,7 @@ gpu = False
 
 # network structure
 # structures = ['xgboost', 'deepfm', 'dnn', 'ffnn']
-net_structure = 'ffnn_all_default' # ffnn_all
+net_structure = 'ensemble_ffnn_all' # ffnn_all
 
 
 random_states = [1111, 2222, 3333, 4444, 5555]
@@ -20,12 +20,13 @@ pickle_data = '/dataset/valid_pickle/'
 scaler_path = '/dataset/preprocessing/'
 
 dataset_path = '/dataset/final_data/dataset/train_split/'
+dataset_path = '/dataset/final_data/small_dataset/'
+
 valid_dataset_path = '/dataset/final_data/dataset/valid/'
 
 cross_valid_data = '/dataset/final_data/dataset/train_split/'
 pred_pickle_path = '/dataset/pred_pickle/'
 model_path = f'/hdd/models/ffnn_default/'
-small_dataset_path = '/dataset/final_data/small_dataset/'
 
 
 # features

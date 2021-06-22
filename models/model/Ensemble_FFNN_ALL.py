@@ -111,7 +111,7 @@ class Ensemble_FFNN_ALL:
         
     
     def train(self, ensemble_num=0):
-        input_dim = 34 #17
+        input_dim = 25 #17
         
         self.models = [Sequential([
             Dense(16, activation = 'relu', input_dim = input_dim),
