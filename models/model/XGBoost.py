@@ -92,7 +92,7 @@ class XGBoost:
         TARGET = self.TARGETS[self.TARGET_id]
         valid = self.df
         RMV = self.feature_extract(valid)
-        print(f'/hdd/models/{self.model_name}/{self.model_name}_{TARGET}/model-{TARGET}-1.xgb')
+        print(f'/hdd/models/{self.model_name}/{self.model_name}_{TARGET}/model-{TARGET}-0.xgb')
         model = joblib.load( f'/hdd/models/{self.model_name}/{self.model_name}_{TARGET}/model-{TARGET}-0.xgb' )
         dvalid = xgb.DMatrix(data=valid.drop(RMV, axis=1))
         pred = model.predict(dvalid)

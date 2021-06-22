@@ -3,7 +3,7 @@ gpu = False
 
 # network structure
 # structures = ['xgboost', 'deepfm', 'dnn', 'ffnn']
-net_structure = 'ffnn_all_default' # ffnn_all
+net_structure = 'xgboost' # ffnn_all
 
 
 random_states = [1111, 2222, 3333, 4444, 5555]
@@ -16,7 +16,7 @@ submission_path = project_root + 'submission/'
 preproc_path = '/hdd/preprocessing/'
 raw_lzo_path = '/hdd/twitter/raw_lzo/'
 dataset_mini_path = '/hdd/twitter/dataset_mini/'
-pickle_data = '/dataset/valid_pickle/'
+pickle_data = '/dataset/pickle/'
 scaler_path = '/dataset/preprocessing/'
 
 dataset_path = '/dataset/final_data/dataset/train_split/'
