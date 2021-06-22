@@ -35,6 +35,7 @@ class Dataiter(Dataset):
             df = self.tweet_engagements(df) # tweet engagement
             df = self.user_engagements(df, self.train) # user engagement
             df = self.tweet_features(df) # tweet features
+            df = self.set_engager_follows_creator(df)
             
 #             df = self.fill_with_default_value(df) # for ensemble
             

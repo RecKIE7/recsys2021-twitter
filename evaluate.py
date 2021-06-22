@@ -13,13 +13,11 @@ from tqdm import tqdm
 
 # path = '/hdd/twitter/test_data/part-210210-.7'
 # path = '/hdd/twitter/test_data2/part-test'
-<<<<<<< HEAD
-# path = '/dataset/final_data/small_dataset/valid_1000'
-=======
-path = '/dataset/final_data/dataset/valid/part-0'
-path = '/dataset/final_data/small_dataset/valid_1000'
->>>>>>> 64ca6036d0b43ea4771f6b98ebdbcc7ce4e987ab
 path = conf.valid_dataset_path + 'part-0'
+path = '/dataset/final_data/dataset/train_tmp/part-00201'
+path = '/dataset/final_data/dataset/part-01'
+#     path = '/dataset/final_data/dataset/part-01'
+
 df = read_data(path)
 
 df['reply_timestamp']   = df['reply_timestamp'].fillna(0)
