@@ -449,9 +449,25 @@ class Dataset:
         return df
     
     def set_engager_follows_creator(self, df):
+        pickle_path = conf.pickle_data
         #### 나중에 피클 나눠지면 더 추가하기 ####
+        
+        ### 0 ###
+        engager_follows_creator_path = pickle_path + "engager_follows_creator_0.pkl"
+
+        
+        if os.path.exists(engager_follows_creator_path ) :
+            with open(engager_follows_creator_path, 'rb') as f :
+                engager_follows_creator = pickle.load(f)
+                engager_follows_creator = defaultdict(lambda : {}, engager_follows_creator)
+        df['engager_follows_creator'] = df.apply(lambda x : 1 if len(engager_follows_creator[x['engager_id']]) > 0 and x['creator_id'] in engager_follows_creator[x['engager_id']]  else 0.5, axis = 1)
+
+
+        df0 = df[df['engager_follows_creator'] != 0.5]
+        df = df[df['engager_follows_creator'] == 0.5]
+        
         ### 1 ###
-        engager_follows_creator_path = pickle_path + "engager_follows_creator_2.pkl"
+        engager_follows_creator_path = pickle_path + "engager_follows_creator_1.pkl"
 
         
         if os.path.exists(engager_follows_creator_path ) :
@@ -465,7 +481,7 @@ class Dataset:
         df = df[df['engager_follows_creator'] == 0.5]
 
         ### 2 ###
-        engager_follows_creator_path = pickle_path + "engager_follows_creator_3.pkl"
+        engager_follows_creator_path = pickle_path + "engager_follows_creator_2.pkl"
 
         if os.path.exists(engager_follows_creator_path ) :
             with open(engager_follows_creator_path, 'rb') as f :
@@ -475,9 +491,61 @@ class Dataset:
 
         df2 = df[df['engager_follows_creator'] != 0.5]
         df = df[df['engager_follows_creator'] == 0.5]
+        
+        ### 3 ###
+        engager_follows_creator_path = pickle_path + "engager_follows_creator_3.pkl"
+
+        
+        if os.path.exists(engager_follows_creator_path ) :
+            with open(engager_follows_creator_path, 'rb') as f :
+                engager_follows_creator = pickle.load(f)
+                engager_follows_creator = defaultdict(lambda : {}, engager_follows_creator)
+        df['engager_follows_creator'] = df.apply(lambda x : 1 if len(engager_follows_creator[x['engager_id']]) > 0 and x['creator_id'] in engager_follows_creator[x['engager_id']]  else 0.5, axis = 1)
+
+
+        df3 = df[df['engager_follows_creator'] != 0.5]
+        df = df[df['engager_follows_creator'] == 0.5]
+        
+        ### 4 ###
+        engager_follows_creator_path = pickle_path + "engager_follows_creator_4.pkl"
+
+        
+        if os.path.exists(engager_follows_creator_path ) :
+            with open(engager_follows_creator_path, 'rb') as f :
+                engager_follows_creator = pickle.load(f)
+                engager_follows_creator = defaultdict(lambda : {}, engager_follows_creator)
+        df['engager_follows_creator'] = df.apply(lambda x : 1 if len(engager_follows_creator[x['engager_id']]) > 0 and x['creator_id'] in engager_follows_creator[x['engager_id']]  else 0.5, axis = 1)
+
+
+        df4 = df[df['engager_follows_creator'] != 0.5]
+        df = df[df['engager_follows_creator'] == 0.5]
        
         ### not follow ###
+        ### 0 ###
+        engager_follows_creator_path = pickle_path + "engager_not_follows_creator_0.pkl"
+
+        if os.path.exists(engager_follows_creator_path ) :
+            with open(engager_follows_creator_path, 'rb') as f :
+                engager_follows_creator = pickle.load(f)
+                engager_follows_creator = defaultdict(lambda : {}, engager_follows_creator)
+        df['engager_follows_creator'] = df.apply(lambda x : 0 if len(engager_follows_creator[x['engager_id']]) > 0 and x['creator_id'] in engager_follows_creator[x['engager_id']]  else 0.5, axis = 1)
+
+        df5 = df[df['engager_follows_creator'] != 0.5]
+        df = df[df['engager_follows_creator'] == 0.5]
+        
         ### 1 ###
+        engager_follows_creator_path = pickle_path + "engager_not_follows_creator_1.pkl"
+
+        if os.path.exists(engager_follows_creator_path ) :
+            with open(engager_follows_creator_path, 'rb') as f :
+                engager_follows_creator = pickle.load(f)
+                engager_follows_creator = defaultdict(lambda : {}, engager_follows_creator)
+        df['engager_follows_creator'] = df.apply(lambda x : 0 if len(engager_follows_creator[x['engager_id']]) > 0 and x['creator_id'] in engager_follows_creator[x['engager_id']]  else 0.5, axis = 1)
+
+        df6 = df[df['engager_follows_creator'] != 0.5]
+        df = df[df['engager_follows_creator'] == 0.5]
+        
+        ### 2 ###
         engager_follows_creator_path = pickle_path + "engager_not_follows_creator_2.pkl"
 
         if os.path.exists(engager_follows_creator_path ) :
@@ -486,10 +554,10 @@ class Dataset:
                 engager_follows_creator = defaultdict(lambda : {}, engager_follows_creator)
         df['engager_follows_creator'] = df.apply(lambda x : 0 if len(engager_follows_creator[x['engager_id']]) > 0 and x['creator_id'] in engager_follows_creator[x['engager_id']]  else 0.5, axis = 1)
 
-        df3 = df[df['engager_follows_creator'] != 0.5]
+        df7 = df[df['engager_follows_creator'] != 0.5]
         df = df[df['engager_follows_creator'] == 0.5]
         
-        ### 2 ###
+        ### 3 ###
         engager_follows_creator_path = pickle_path + "engager_not_follows_creator_3.pkl"
 
         if os.path.exists(engager_follows_creator_path ) :
@@ -498,13 +566,26 @@ class Dataset:
                 engager_follows_creator = defaultdict(lambda : {}, engager_follows_creator)
         df['engager_follows_creator'] = df.apply(lambda x : 0 if len(engager_follows_creator[x['engager_id']]) > 0 and x['creator_id'] in engager_follows_creator[x['engager_id']]  else 0.5, axis = 1)
 
+        df8 = df[df['engager_follows_creator'] != 0.5]
+        df = df[df['engager_follows_creator'] == 0.5]
+        
+        ### 4 ###
+        engager_follows_creator_path = pickle_path + "engager_not_follows_creator_4.pkl"
+
+        if os.path.exists(engager_follows_creator_path ) :
+            with open(engager_follows_creator_path, 'rb') as f :
+                engager_follows_creator = pickle.load(f)
+                engager_follows_creator = defaultdict(lambda : {}, engager_follows_creator)
+                
+        df['engager_follows_creator'] = df.apply(lambda x : 0 if len(engager_follows_creator[x['engager_id']]) > 0 and x['creator_id'] in engager_follows_creator[x['engager_id']]  else 0.5, axis = 1)
+
 #         df4 = df[df['engager_follows_creator'] != 0.5]
 #         df = df[df['engager_follows_creator'] == 0.5]
         
        
 
-        df = pd.concat([df1, df2, df3, df])
-        del df1, df2, df3
+        df = pd.concat([df1, df2, df3, df4, df5, df6, df7, df8, df])
+        del df1, df2, df3, df4, df5, df6, df7, df8
         df = df.reset_index(drop=True)
         return df
         
