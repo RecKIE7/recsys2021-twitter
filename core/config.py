@@ -16,11 +16,11 @@ submission_path = project_root + 'submission/'
 preproc_path = '/hdd/preprocessing/'
 raw_lzo_path = '/hdd/twitter/raw_lzo/'
 dataset_mini_path = '/hdd/twitter/dataset_mini/'
-pickle_data = '/dataset/valid_pickle/'
+pickle_data = '/dataset/pickle/'
 scaler_path = '/dataset/preprocessing/'
 
 dataset_path = '/dataset/final_data/dataset/train_split/'
-dataset_path = '/dataset/final_data/small_dataset/'
+# dataset_path = '/dataset/final_data/small_dataset/'
 
 valid_dataset_path = '/dataset/final_data/dataset/valid/'
 
