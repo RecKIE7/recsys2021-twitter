@@ -33,6 +33,19 @@ def evaluate_test_set():
     ds = Dataset()
     file = path
     with open('results.csv', 'w') as output:
+        #for file in tqdm(part_files):
+        df = read_data(file)
+        df = ds.preprocess(df, TARGET_id=conf.REPLY)
+        
+        df = ds.tweet_engagements(df) # tweet engagement
+        df = ds.user_engagements(df, train = False) # user engagement
+        df = ds.tweet_features(df) # tweet features
+        
+        pred_reply = FFNN_ALL_DEFAULT(df, conf.REPLY).predict(model_path) #, model_num=0
+        pred_retweet = FFNN_ALL_DEFAULT(df, conf.RETWEET).predict(model_path) 
+        pred_comment = FFNN_ALL_DEFAULT(df, conf.COMMNET).predict(model_path) 
+        pred_like = FFNN_ALL_DEFAULT(df, conf.LIKE).predict(model_path) 
+        '''       
         for file in tqdm(part_files):
             df = read_data(file)
             df = ds.preprocess(df, TARGET_id=conf.REPLY)
@@ -45,23 +58,23 @@ def evaluate_test_set():
             pred_retweet = Ensemble_FFNN_ALL(df, conf.RETWEET).predict(model_path, model_num=0) 
             pred_comment = Ensemble_FFNN_ALL(df, conf.COMMNET).predict(model_path, model_num=0) 
             pred_like = Ensemble_FFNN_ALL(df, conf.LIKE).predict(model_path, model_num=0) 
-
-            with open(file, 'r') as f:
-                for i, line in enumerate(f.readlines()):
-                    tweet_id, user_id, features = parse_input_line(line)
-                    '''
-                    ## XGBoost
-                    reply_pred = pred_reply[i]
-                    retweet_pred = pred_retweet[i]
-                    quote_pred = pred_comment[i]
-                    fav_pred = pred_like[i]
-                    '''
-                    reply_pred = pred_reply[i][0]
-                    retweet_pred = pred_retweet[i][0]
-                    quote_pred = pred_comment[i][0]
-                    fav_pred = pred_like[i][0]
-
-                    output.write(f'{tweet_id},{user_id},{reply_pred},{retweet_pred},{quote_pred},{fav_pred}\n')
+        '''
+        with open(file, 'r') as f:
+            for i, line in enumerate(f.readlines()):
+                tweet_id, user_id, features = parse_input_line(line)
+                '''
+                ## XGBoost
+                reply_pred = pred_reply[i]
+                retweet_pred = pred_retweet[i]
+                quote_pred = pred_comment[i]
+                fav_pred = pred_like[i]
+                '''
+                reply_pred = pred_reply[i][0]
+                retweet_pred = pred_retweet[i][0]
+                quote_pred = pred_comment[i][0]
+                fav_pred = pred_like[i][0]
+                
+                output.write(f'{tweet_id},{user_id},{reply_pred},{retweet_pred},{quote_pred},{fav_pred}\n')
 
         del df
 

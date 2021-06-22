@@ -351,7 +351,7 @@ class Dataset:
 
         df1 = df[df['number_of_tweet_engagements'] != -1]
         df = df[df['number_of_tweet_engagements'] == -1]
-
+        
         ### 2 ###
         tweet_engagement_path = pickle_path + "tweet_id_engagement_new_2.pkl"
 
@@ -364,7 +364,7 @@ class Dataset:
 
         df2 = df[df['number_of_tweet_engagements'] != -1]
         df = df[df['number_of_tweet_engagements'] == -1]
-
+        
         ### 3 ###
         tweet_engagement_path = pickle_path + "tweet_id_engagement_new_3.pkl"
 
@@ -390,7 +390,7 @@ class Dataset:
         
         df4 = df[df['number_of_tweet_engagements'] != -1]
         df = df[df['number_of_tweet_engagements'] == -1]
-        
+       
         ### 5 ###
         tweet_engagement_path = pickle_path + "tweet_id_engagement_new_5.pkl"
 
@@ -403,7 +403,7 @@ class Dataset:
         
         df5 = df[df['number_of_tweet_engagements'] != -1]
         df = df[df['number_of_tweet_engagements'] == -1]
-
+        
         ### 6 : from creator ###
         tweet_engagement_path = pickle_path + "creator_avg_all.pkl"
 
@@ -414,10 +414,12 @@ class Dataset:
 
 
         df['number_of_tweet_engagements'] = df.apply(lambda x : tweet_engagements[x['creator_id']], axis = 1)
-
-
-        df = pd.concat([df1, df2, df3, df4, df5, df])
-        del df1, df2, df3
+        if len(df) != 0 :
+            df = pd.concat([df1, df2, df3, df4, df5, df])
+        else :
+            df = pd.concat([df1, df2, df3, df4, df5])
+            
+        del df1, df2, df3, df4, df5
         df = df.reset_index(drop=True)
         
         # creator engagements
