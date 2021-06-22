@@ -21,7 +21,7 @@ pickle_data = '/dataset/pickle/'
 scaler_path = '/dataset/preprocessing/'
 
 dataset_path = '/dataset/final_data/dataset/train_split/'
-dataset_path = '/dataset/final_data/small_dataset/'
+# dataset_path = '/dataset/final_data/small_dataset/'
 
 valid_dataset_path = '/dataset/final_data/dataset/valid/'
 
