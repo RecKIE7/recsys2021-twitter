@@ -49,6 +49,15 @@ pip install -r requirements.txt
 ```
 
 ## Run the code
+- target : like, retweet, reply, comment, all
 ```
-## here
+./train.sh 'target'
+```
+
+```
+./run
+```
+
+```
+python evaluate.py
 ```
