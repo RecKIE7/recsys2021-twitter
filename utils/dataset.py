@@ -463,6 +463,7 @@ class Dataset:
 
         df0 = df[df['engager_follows_creator'] != 0.5]
         df = df[df['engager_follows_creator'] == 0.5]
+        del engager_follows_creator
         
         ### 1 ###
         engager_follows_creator_path = pickle_path + "engager_follows_creator_1.pkl"
@@ -477,6 +478,7 @@ class Dataset:
 
         df1 = df[df['engager_follows_creator'] != 0.5]
         df = df[df['engager_follows_creator'] == 0.5]
+        del engager_follows_creator
 
         ### 2 ###
         engager_follows_creator_path = pickle_path + "engager_follows_creator_2.pkl"
@@ -489,6 +491,7 @@ class Dataset:
 
         df2 = df[df['engager_follows_creator'] != 0.5]
         df = df[df['engager_follows_creator'] == 0.5]
+        del engager_follows_creator
         
         ### 3 ###
         engager_follows_creator_path = pickle_path + "engager_follows_creator_3.pkl"
@@ -503,6 +506,7 @@ class Dataset:
 
         df3 = df[df['engager_follows_creator'] != 0.5]
         df = df[df['engager_follows_creator'] == 0.5]
+        del engager_follows_creator
         
         ### 4 ###
         engager_follows_creator_path = pickle_path + "engager_follows_creator_4.pkl"
@@ -517,6 +521,7 @@ class Dataset:
 
         df4 = df[df['engager_follows_creator'] != 0.5]
         df = df[df['engager_follows_creator'] == 0.5]
+        del engager_follows_creator
        
         ### not follow ###
         ### 0 ###
@@ -530,6 +535,7 @@ class Dataset:
 
         df5 = df[df['engager_follows_creator'] != 0.5]
         df = df[df['engager_follows_creator'] == 0.5]
+        del engager_follows_creator
         
         ### 1 ###
         engager_follows_creator_path = pickle_path + "engager_not_follows_creator_1.pkl"
@@ -542,6 +548,7 @@ class Dataset:
 
         df6 = df[df['engager_follows_creator'] != 0.5]
         df = df[df['engager_follows_creator'] == 0.5]
+        del engager_follows_creator
         
         ### 2 ###
         engager_follows_creator_path = pickle_path + "engager_not_follows_creator_2.pkl"
@@ -554,6 +561,7 @@ class Dataset:
 
         df7 = df[df['engager_follows_creator'] != 0.5]
         df = df[df['engager_follows_creator'] == 0.5]
+        del engager_follows_creator
         
         ### 3 ###
         engager_follows_creator_path = pickle_path + "engager_not_follows_creator_3.pkl"
@@ -566,6 +574,7 @@ class Dataset:
 
         df8 = df[df['engager_follows_creator'] != 0.5]
         df = df[df['engager_follows_creator'] == 0.5]
+        del engager_follows_creator
         
         ### 4 ###
         engager_follows_creator_path = pickle_path + "engager_not_follows_creator_4.pkl"
@@ -577,13 +586,10 @@ class Dataset:
                 
         df['engager_follows_creator'] = df.apply(lambda x : 0 if len(engager_follows_creator[x['engager_id']]) > 0 and x['creator_id'] in engager_follows_creator[x['engager_id']]  else 0.5, axis = 1)
 
-#         df4 = df[df['engager_follows_creator'] != 0.5]
-#         df = df[df['engager_follows_creator'] == 0.5]
         
-       
-
-        df = pd.concat([df1, df2, df3, df4, df5, df6, df7, df8, df])
-        del df1, df2, df3, df4, df5, df6, df7, df8
+        df = pd.concat([df0, df1, df2, df3, df4, df5, df6, df7, df8, df])
+        del df0, df1, df2, df3, df4, df5, df6, df7, df8
+        del engager_follows_creator
         df = df.reset_index(drop=True)
         return df
         

@@ -15,7 +15,8 @@ from tqdm import tqdm
 # path = '/hdd/twitter/test_data2/part-test'
 path = conf.valid_dataset_path + 'part-0'
 path = '/dataset/final_data/dataset/train_tmp/part-00201'
-path = '/dataset/final_data/dataset/part-01'
+path = '/dataset/final_data/dataset/valid//part-0'
+# path = '/dataset/final_data/small_dataset/part-valid_1000'
 #     path = '/dataset/final_data/dataset/part-01'
 
 df = read_data(path)

@@ -25,8 +25,9 @@ def evaluate_test_set():
 #     path = '/dataset/final_data/small_dataset/valid_1000'
 #     path = conf.valid_dataset_path
     path = '/dataset/final_data/dataset/train_tmp'
-    path = '/dataset/final_data/dataset/'
+    path = '/dataset/final_data/dataset/valid/'
     model_path = conf.model_path
+#     model_path = '/hdd/models/test.ensemble_ffnn_pkl/'
     
 
     part_files = sorted([os.path.join(path, f) for f in os.listdir(path) if 'part' in f])
@@ -38,13 +39,14 @@ def evaluate_test_set():
             df = ds.preprocess(df, TARGET_id=conf.REPLY)
 
             df = ds.tweet_engagements(df) # tweet engagement
-            df = ds.user_engagements(df) # user engagement
+            df = ds.user_engagements(df, train=False) # user engagement
             df = ds.tweet_features(df) # tweet features
+            df = ds.set_engager_follows_creator(df) 
 
-            pred_reply = Ensemble_FFNN_ALL(df, conf.REPLY).predict(model_path, model_num=0) 
-            pred_retweet = Ensemble_FFNN_ALL(df, conf.RETWEET).predict(model_path, model_num=0) 
-            pred_comment = Ensemble_FFNN_ALL(df, conf.COMMNET).predict(model_path, model_num=0) 
-            pred_like = Ensemble_FFNN_ALL(df, conf.LIKE).predict(model_path, model_num=0) 
+            pred_reply = Ensemble_FFNN_ALL(df, conf.REPLY).predict(model_path, model_num=1)
+            pred_retweet = Ensemble_FFNN_ALL(df, conf.RETWEET).predict(model_path, model_num=1) 
+            pred_comment = Ensemble_FFNN_ALL(df, conf.COMMNET).predict(model_path, model_num=1) 
+            pred_like = Ensemble_FFNN_ALL(df, conf.LIKE).predict(model_path, model_num=1) 
 
             with open(file, 'r') as f:
                 for i, line in enumerate(f.readlines()):
