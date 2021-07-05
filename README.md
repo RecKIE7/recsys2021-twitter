@@ -35,11 +35,6 @@ We participated in the challenge as RecKIE, a team of 2 Masters students from So
 We worked under the supervision of a professor:
 - Chulyun Kim
 
-## Features
-features
-
-## Models
-models
 
 ## Requirements
 - __Python__ : 3.7.10
