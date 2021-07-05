@@ -3,7 +3,8 @@ gpu = False
 
 # network structure
 # structures = ['xgboost', 'deepfm', 'dnn', 'ffnn']
-net_structure = 'ensemble_ffnn_all' # ffnn_all
+net_structure = 'ffnn_all_default' # ffnn_all
+#net_structure = 'ensemble_ffnn_all' # ffnn_all
 
 
 random_states = [1111, 2222, 3333, 4444, 5555]
